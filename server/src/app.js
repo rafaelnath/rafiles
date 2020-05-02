@@ -43,10 +43,6 @@ app.use('/book', bookRoutes);
 app.use('/major', majorRoutes);
 app.use('/note', noteRoutes);
 
-app.get('/download', (req,res)=>{
-    const file = './uploads/Dana Product Design.pdf';
-    res.download(file);
-})
 
 app.post('/files/multiupload', (req, res) => {
     let datas = req.files.files;
