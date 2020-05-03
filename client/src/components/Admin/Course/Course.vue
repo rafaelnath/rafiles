@@ -98,7 +98,7 @@
 import Api from "@/services/CourseService";
 import AddBook from "./AddBook";
 import UploadBook from "./UploadBook";
-import _ from 'lodash';
+// import _ from 'lodash';
 
 export default {
   data() {
@@ -142,7 +142,7 @@ export default {
           // console.log(res.data.data.name);
           return res.data.data.name;
         })
-        .catch(err =>{
+        .catch(() =>{
           // window.alert(err.response.data.msg);
           return;
         })
@@ -221,7 +221,7 @@ export default {
         userId: userId,
         courseId: this.courseId
       })
-        .then(res => {
+        .then(() => {
           this.addUserCB(userId, this.courseId);
         })
         .catch(err => {
@@ -233,7 +233,7 @@ export default {
         userId: uId,
         courseId: cId
       })
-        .then(res => {
+        .then(() => {
           window.alert("user added.");
           this.initData();
         })
@@ -248,7 +248,7 @@ export default {
           userId: uId,
           courseId: this.courseId
         })
-          .then(res => {
+          .then(() => {
             this.removeUserCB(uId, this.courseId);
           })
           .catch(err => {
@@ -261,7 +261,7 @@ export default {
         userId: uId,
         courseId: cId
       })
-        .then(res => {
+        .then(() => {
           window.alert("A user have been removed from course.");
           this.initData();
         })
@@ -275,7 +275,7 @@ export default {
         userId: uId,
         courseId: this.courseId
       })
-        .then(res => {
+        .then(() => {
           this.initData();
         })
         .catch(err => {

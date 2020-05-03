@@ -90,7 +90,7 @@ export default {
         userId: userId,
         courseId: this.courseId
       })
-        .then(res => {
+        .then(() => {
           this.addUserCB(userId, this.courseId);
         })
         .catch(err => {
@@ -102,7 +102,7 @@ export default {
         userId: uId,
         courseId: cId
       })
-        .then(res => {
+        .then(() => {
           window.alert("user added.");
           this.initData();
         })

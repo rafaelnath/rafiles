@@ -85,7 +85,7 @@ export default {
         classId: this.$route.params.cId,
         className: this.$route.params.cName
       })
-        .then(res => {
+        .then(() => {
           this.addUserCB(userId, this.$route.params.cId);
         })
         .catch(err => {
@@ -97,7 +97,7 @@ export default {
         userId: uId,
         classId: cId
       })
-        .then(res => {
+        .then(() => {
           window.alert("user added.");
           this.initData();
         })

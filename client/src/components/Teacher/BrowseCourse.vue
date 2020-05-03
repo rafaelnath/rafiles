@@ -133,7 +133,7 @@ export default {
             courseId: cId,
             userId: this.uid
         })
-        .then(res =>{
+        .then(() =>{
             this.seeInfo(cId);
         })
         .catch(err=>{

@@ -147,7 +147,7 @@ export default {
       },
       keep(bId){
           UserApi.keepBook({userId:this.uid, bookId: bId})
-            .then(res =>{
+            .then(() =>{
                 window.alert('a book has been kept to your backpack')
             })
             .catch(err =>{

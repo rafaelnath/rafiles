@@ -62,7 +62,7 @@ export default {
 
     deleteUser(id) {
       if (window.confirm("Are you sure?")) {
-        Api.deleteUser(id).then(res => {
+        Api.deleteUser(id).then(() => {
           window.alert("user deleted");
           this.initData();
         });

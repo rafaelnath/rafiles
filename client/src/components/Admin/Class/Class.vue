@@ -170,7 +170,7 @@ export default {
           userId: uId,
           classId: this.$route.params.id
         })
-          .then(res => {
+          .then(() => {
             this.removeUserCB(uId, this.$route.params.id);
           })
           .catch(err => {
@@ -183,7 +183,7 @@ export default {
         userId: uId,
         classId: cId
       })
-        .then(res => {
+        .then(() => {
           window.alert("A user have been removed from class.");
           this.initData();
         })
@@ -197,7 +197,7 @@ export default {
         userId: userId,
         classId: this.$route.params.id
       })
-        .then(res => {
+        .then(() => {
           this.addUserCB(userId, this.$route.params.id);
         })
         .catch(err => {
@@ -209,7 +209,7 @@ export default {
         userId: uId,
         classId: cId
       })
-        .then(res => {
+        .then(() => {
           window.alert("user added.");
           this.initData();
         })
@@ -223,7 +223,7 @@ export default {
         userId: uId,
         classId: this.$route.params.id
       })
-        .then(res => {
+        .then(() => {
           this.initData();
         })
         .catch(err => {
