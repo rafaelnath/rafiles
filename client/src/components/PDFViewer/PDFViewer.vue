@@ -30,11 +30,11 @@
                   <label>Side Note - Page {{this.currentPage}}</label>
               </div>
               <div class="right">
-                  <div class="button addPage"></div>
-                  <div class="button details"></div>
-                  <div class="button menu"></div>
+                  <div class="button copy" @click="copy"></div>
+                  <div class="button menu" @click="showmenu = !showmenu" v-click-outside="hidemenu"></div>
               </div>
               <div style="clear: both"/>
+              <note-menu v-if="showmenu" :totalpage="pageCount"/>
           </div>
           <div class="body">
               <input type="text" v-model="note.title" @input="checkChanges" @change="isEmpty">
@@ -57,7 +57,9 @@ import PDFData from './PDFData';
 import PDFDocument from './PDFDocument';
 
 import Api from '@/services/NoteService';
-import clone from 'lodash.clone'
+import NoteMenu from './NoteMenu';
+import clone from 'lodash.clone';
+import ClickOutside from 'v-click-outside';
 
 
 function floor(value, precision){
@@ -68,12 +70,17 @@ function floor(value, precision){
 export default {
     name: 'PDFViewer',
 
+    directives:{
+        clickOutside: ClickOutside.directive
+    },
+
     components: {
         PDFZoom,
         PDFPaginator,
         PDFData,
         PDFDocument,
-        Headbar
+        Headbar,
+        NoteMenu,
     },
 
     data(){
@@ -90,6 +97,7 @@ export default {
             note:'',
             initialNote:'',
             isChanged: false,
+            showmenu: false,
         };
     },
 
@@ -196,6 +204,19 @@ export default {
             if(this.note.title === ''){
                 this.note.title = 'Untitled';
             }
+        },
+
+        copy(){
+            this.$copyText(this.note.content).then((e)=>{
+                window.alert('Note is copied to clipboard!');
+                console.log(e);
+            }, (e) =>{
+                window.alert('Unable to copy note');
+                console.log(e)
+            })
+        },
+        hidemenu(){
+            this.showmenu = false;
         }
     },
 
@@ -236,11 +257,13 @@ export default {
         border-radius: 10px;
         padding:10px;
         position: relative;
+        overflow: hidden;
     }
     .head{
         border-bottom: 2px solid #999;
         margin-bottom: 15px;
         padding-bottom: 3px;
+        position: relative;
     }
     .head .left{
         float: left;

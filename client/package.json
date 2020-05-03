@@ -18,7 +18,9 @@
     "lodash": "^4.17.15",
     "pdfjs-dist": "^2.3.200",
     "simplebar": "^5.1.0",
+    "v-click-outside": "^3.0.1",
     "vue": "^2.5.2",
+    "vue-clipboard2": "^0.3.1",
     "vue-router": "^3.0.1"
   },
   "devDependencies": {
