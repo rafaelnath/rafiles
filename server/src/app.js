@@ -22,6 +22,7 @@ app.use(fileUpload());
 
 // because useFindAndModify is deprecated and its true by default, so ..
 mongoose.set('useFindAndModify', false);
+mongoose.set('useUnifiedTopology', true);
 
 //useNewUrlParser true to fix deprecation warnings
 mongoose.connect(`mongodb+srv://test:test@todo-rccud.gcp.mongodb.net/final-project-rafiles?retryWrites=true&w=majority`, {useNewUrlParser: true});
