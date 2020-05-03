@@ -20,7 +20,7 @@ export default {
       Api.createCourse({
         name: this.name,
         classId: this.$route.params.id
-      }).then(res => {
+      }).then(() => {
         window.alert("new course created.");
         this.$parent.initData();
         this.name = '';

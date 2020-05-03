@@ -20,7 +20,7 @@ function createObserver (el, vnode, modifiers, callback){
     return observer;
 }
 
-function disconnectObserver(observer, el){ //self explanatory i guess
+function disconnectObserver(observer){ //self explanatory i guess
     // console.log('disconnecting observer, ' + el);
     if(observer) observer.disconnect();
 }

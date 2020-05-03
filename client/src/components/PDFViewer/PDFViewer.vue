@@ -50,8 +50,8 @@
 
 <script>
 import Headbar from './Headbar';
-import PDFZoom from './PDFZoom';
-import PDFPaginator from './PDFPaginator';
+// import PDFZoom from './PDFZoom';
+// import PDFPaginator from './PDFPaginator';
 
 import PDFData from './PDFData';
 import PDFDocument from './PDFDocument';
@@ -69,8 +69,8 @@ export default {
     name: 'PDFViewer',
 
     components: {
-        PDFZoom,
-        PDFPaginator,
+        // PDFZoom,
+        // PDFPaginator,
         PDFData,
         PDFDocument,
         Headbar
@@ -154,7 +154,7 @@ export default {
                     nid: this.note._id,
                     title: this.note.title,
                     content: this.note.content
-                }).then(res=>{
+                }).then(()=>{
                     window.alert('note updated!');
                 }).catch(err =>{
                     window.alert(err.response.data.msg);
@@ -166,7 +166,7 @@ export default {
                     bookId: this.$route.query.bId,
                     userId: this.uId,
                     page: this.currentPage
-                }).then(res =>{
+                }).then(() =>{
                     window.alert('note created!');
                 }).catch(err =>{
                     window.alert(err.response.data.msg);

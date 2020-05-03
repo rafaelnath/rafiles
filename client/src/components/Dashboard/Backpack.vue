@@ -46,7 +46,7 @@ export default {
     },
     removeBook(bId){
       Api.removeBook({bookId: bId, userId: this.uId})
-        .then(res =>{
+        .then(() =>{
           window.alert('one book has been removed from your backpack.');
           this.$parent.initData();
         })

@@ -83,7 +83,7 @@ export default {
         birthdate: this.birthdate,
         role: this.role
       })
-        .then(res => {
+        .then(() => {
           window.alert("register succeed.");
         })
         .catch(err => {

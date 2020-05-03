@@ -28,7 +28,7 @@
 <script>
 import Api from "@/services/BookService";
 import RealApi from "@/services/Api";
-import MultiUpload from "./MultiUpload";
+// import MultiUpload from "./MultiUpload";
 
 export default {
   data() {
@@ -41,9 +41,9 @@ export default {
     };
   },
 
-  components: {
+  /* components: {
     MultiUpload
-  },
+  }, */
 
   methods: {
     goTo(page) {
@@ -105,7 +105,7 @@ export default {
         size: size,
         filename: name
       })
-        .then(res => {
+        .then(() => {
           this.file = "";
           window.alert("book added!");
         })

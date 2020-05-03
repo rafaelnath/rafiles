@@ -15,7 +15,7 @@
 
 <script>
 import Api from "@/services/ClassService";
-import RealApi from "@/services/Api";
+// import RealApi from "@/services/Api";
 
 export default {
   data() {

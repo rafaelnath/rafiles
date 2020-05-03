@@ -32,7 +32,7 @@
 
 <script>
 import Api from "@/services/ClassService";
-import CourseApi from "@/services/CourseService";
+// import CourseApi from "@/services/CourseService";
 export default {
   data() {
     return {
@@ -100,7 +100,7 @@ export default {
             classId: this.cId,
             userId: this.uid
         })
-        .then(res =>{
+        .then(() =>{
             this.selectClass(this.cId);
         })
         .catch(err=>{
