@@ -27,7 +27,11 @@
           <!-- <div class="teacher" v-if="course.users.length !== 0"> -->
           <div class="teacher">
             <p>Teacher:</p>
-            <p v-if="course.users.length !== 0">{{course.users}}</p>
+            <p v-if="course.users.length !== 0">{{
+                course.users
+                  .filter(it => it.role === 'teacher')
+                  .map(it => it.name)
+              }}</p>
             <p v-else>none</p>
           </div>
         </div>

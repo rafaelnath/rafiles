@@ -115,7 +115,7 @@ export default new VueRouter({
       name: 'Student',
       redirect: '/student/dashboard',
       component: () => import('@/components/Layout'),
-      children:[
+      children: [
         {
           path: 'dashboard',
           name: 'Student Dashboard',
@@ -149,15 +149,15 @@ export default new VueRouter({
       name: 'Teacher',
       redirect: '/teacher/dashboard',
       component: () => import('@/components/Layout'),
-      children:[
+      children: [
         {
           path: 'dashboard',
-          name: 'Student Dashboard',
+          name: 'Teacher Dashboard',
           component: () => import(`@/components/Dashboard/Dashboard`),
         },
         {
           path: 'courses',
-          name: 'Student Class',
+          name: 'Teacher Class',
           component: () => import('@/components/Teacher/Courses')
         },
         {
@@ -167,21 +167,20 @@ export default new VueRouter({
         },
         {
           path: 'course',
-          name: 'Student Course',
+          name: 'Teacher Course',
           component: () => import('@/components/Teacher/Course')
         },
         {
           path: 'browse',
-          name: 'Student Browse',
+          name: 'Teacher Browse',
           component: () => import('@/components/Teacher/Browse')
         },
       ]
     },
-
     {
       path: '/pdfviewer',
       name: 'PDFViewer',
       component: () => import('@/components/PDFViewer/PDFViewer')
-    }
+    },
   ]
 })
