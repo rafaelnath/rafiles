@@ -32,10 +32,9 @@ let userSchema = new Schema({
         type: Date,
         required: true,
     },
-    // birthdate: {
-    //     type: String,
-    //     required: true,
-    // },
+    displaypic: {
+        type: String,
+    },
     class: [{
         type: Schema.Types.ObjectId,
         ref: 'Class'

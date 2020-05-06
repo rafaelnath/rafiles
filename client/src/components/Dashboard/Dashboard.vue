@@ -1,7 +1,9 @@
 <template>
   <div class="dashboard">
     <div class="userbar">
-      <div class="picture"></div>
+      <div class="picture">
+        <img :src="dp"/>
+      </div>
       <div class="info">
         <div class="info-wrapper">
           <div class="name">
@@ -68,6 +70,7 @@ export default {
       uId: "",
       user: "",
       tab: 'bp',
+      dp: null,
     };
   },
 
@@ -84,6 +87,8 @@ export default {
     initData() {
       Api.get(this.uId).then(user => {
         this.user = user.data;
+        console.log(this.user.displaypic);
+        this.dp = this.user.displaypic;
       });
     }
   }
@@ -107,6 +112,16 @@ export default {
   background: rgb(241, 241, 241);
   box-shadow: 0 12px 18px rgba(0, 0, 0, 0.219);
   float: left;
+  position: relative;
+}
+.picture img{
+  width: 88%;
+  /* background: red; */
+  border-radius: 20px;
+  position: absolute;
+  top:50%;
+  left:50%;
+  transform: translate(-50%, -50%);
 }
 .info {
   padding: 0 30px;

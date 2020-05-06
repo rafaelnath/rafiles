@@ -1,6 +1,7 @@
 const User = require('../models/user');
 const bcrypt = require('../helpers/bcrypt');
 const jwt = require('jsonwebtoken');
+const fs = require('fs');
 
 module.exports = {
     register(req, res) {
@@ -17,6 +18,7 @@ module.exports = {
                     nationality: req.body.nationality,
                     gender: req.body.gender,
                     birthdate: new Date(req.body.birthdate),
+                    displaypic: req.body.upic,
                     // birthdate: req.body.birthdate,
                 })
                     .then(user => {
@@ -70,7 +72,7 @@ module.exports = {
             .populate('class')
             .populate('backpack')
             .then(user => {
-                res.status(200).json(user);
+                res.status(200).json(user)
             }).catch(err => {
                 res.status(400).json(err);
             })

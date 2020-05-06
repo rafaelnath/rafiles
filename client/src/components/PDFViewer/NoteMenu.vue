@@ -1,5 +1,5 @@
 <template>
-  <div class="note-menu">
+  <div class="note-menu" v-click-outside="hidemenu">
       <div class="container">
         <p class="title">Add Page</p>
         <form @submit.prevent="addPage">
@@ -17,12 +17,12 @@
         <div class="pagelist">
             <div class="pl-container">
                 <ul>
-                    <li @click="removeNote">Page 1 <span class="del">x</span></li>
+                    <li v-for="(page, index) in npage" :key="index" @click="removeNote('that', page)">Page - {{page}}<span class="del">x</span></li>
                 </ul>
             </div>
         </div>
         <div class="footer">
-            <div class="button" @click="removeNote">Remove</div>
+            <div class="button" @click="removeNote('this', cpage)">Remove</div>
             <div class="delete" @click="deleteNote">Delete Note</div>
         </div>
       </div>
@@ -31,7 +31,16 @@
 </template>
 
 <script>
+import ClickOutside from 'v-click-outside';
+import Api from '@/services/NoteService';
+import range from 'lodash/range'
+
 export default {
+
+    directives:{
+        clickOutside: ClickOutside.directive
+    },
+
     data(){
         return{
             inputType: 'single',
@@ -45,6 +54,9 @@ export default {
 
     props:{
         totalpage: Number,
+        nid: String,
+        npage: Array,
+        cpage: Number,
     },
 
     methods:{
@@ -53,7 +65,17 @@ export default {
                 if(this.singlepage === ''){
                     window.alert(`Input page needs to be filled!`);
                 } else{
-                    window.alert(`API CALLED!`);
+                    let page = this.singlepage;
+                    Api.addPage({
+                        nid: this.nid,
+                        page: page
+                    }).then(res =>{
+                        window.alert('done :)');
+                        this.singlepage = '';
+                        this.$parent.initNote();
+                    }).catch(err =>{
+                        window.alert(err.response.data ? err.response.data : err);
+                    })
                 }
             } else{
                 let {val1, val2} = this.multipage;
@@ -62,8 +84,22 @@ export default {
                 } else if (val1 >= val2){
                     window.alert(`the 'to' input page must be bigger than 'from' input page.`);
                 } else{
-                    //call API
-                    window.alert('API CALLED!');
+                    let pages = [];
+                    range(parseInt(val1), parseInt(val2) + 1).map(page => pages.push(page));
+                    
+                    Api.addPage({
+                        nid: this.nid,
+                        page: pages
+                    }).then(res =>{
+                        window.alert('done :)');
+                        // console.log(res.data);
+                        this.multipage = {
+                            val1: '', val2: ''
+                        }
+                        this.$parent.initNote();
+                    }).catch(err =>{
+                        window.alert(err.response.data ? err.response.data : err);
+                    })
                 }
             }
         },
@@ -79,11 +115,33 @@ export default {
                 this.singlepage = ''
             }
         },
-        removeNote(){
-            window.alert('note removed!');
-        },
         deleteNote(){
-            window.alert('note deleted!');
+            if(window.confirm('delete note?')){
+                Api.deleteNote(this.nid).then(res=>{
+                    window.alert('Note deleted.')
+                    this.$parent.initNote();
+                    this.hidemenu();
+                }).catch(err => {
+                    window.alert(err.response.data ? err.response.data : err);
+                })
+            }
+        },
+        hidemenu(){
+            this.$parent.hidemenu();
+        },
+        removeNote(cond, page){
+            if(window.confirm('remove note from this page?')){
+                Api.removePage({
+                    nid: this.nid,
+                    page: page
+                }).then(res =>{
+                    window.alert(cond === 'this' ? 'note removed from this page' : `note removed from page - ${page}`);
+                    this.$parent.initNote();
+                    this.$parent.hidemenu();
+                }).catch(err =>{
+                    window.alert(err.response.data ? err.response.data : err);
+                })
+            }
         }
     }
 };
@@ -164,6 +222,7 @@ input[type="submit"]{
 .pl-container li:hover > .del{
     display: initial;
     color:red;
+    margin-left:10px;
 }
 
 li{

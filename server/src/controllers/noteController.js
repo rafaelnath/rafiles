@@ -79,26 +79,36 @@ module.exports = {
     //         res.status(400).json(err.message);
     //     })
     // },
-    update(req, res){
+    update(req, res) {
         let noteObj = {
             title: req.body.title,
             content: req.body.content
         }
         Note.findByIdAndUpdate(req.body.nid, noteObj)
-            .then(note =>{
+            .then(note => {
                 res.status(200).json(note)
             })
-            .catch(err =>{
-                res.status(400).json({msg: err});
+            .catch(err => {
+                res.status(400).json({ msg: err });
             })
     },
     addPage(req, res) {
-        Note.findByIdAndUpdate(req.body.nid, { $push: { page: req.body.page } })
-            .then(note => {
-                res.status(200).json(note);
-            }).catch(err => {
-                res.status(400).json(err.message);
-            })
+        let pages = req.body.page;
+
+        Note.find().where('page').in(pages).then(note => {
+            if (note.length > 0) {
+                throw new Error(`The inputted page already had a note`);
+            } else {
+                Note.findByIdAndUpdate(req.body.nid, { $push: { page: pages } })
+                    .then(note => {
+                        res.status(200).json(note);
+                    }).catch(err => {
+                        res.status(400).json(err.message);
+                    })
+            }
+        }).catch(err => {
+            res.status(400).json(err.message);
+        })
     },
     removePage(req, res) {
         Note.findByIdAndUpdate(req.body.nid, { $pull: { page: req.body.page } })

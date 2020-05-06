@@ -29,12 +29,12 @@
               <div class="left">
                   <label>Side Note - Page {{this.currentPage}}</label>
               </div>
-              <div class="right">
+              <div class="right" v-if="note._id">
                   <div class="button copy" @click="copy"></div>
-                  <div class="button menu" @click="showmenu = !showmenu" v-click-outside="hidemenu"></div>
+                  <div class="button menu" @click="showmenu = !showmenu"></div>
               </div>
               <div style="clear: both"/>
-              <note-menu v-if="showmenu" :totalpage="pageCount"/>
+              <note-menu v-if="showmenu" :totalpage="pageCount" :nid="note._id" :npage="note.page" :cpage="currentPage"/>
           </div>
           <div class="body">
               <input type="text" v-model="note.title" @input="checkChanges" @change="isEmpty">
@@ -59,7 +59,6 @@ import PDFDocument from './PDFDocument';
 import Api from '@/services/NoteService';
 import NoteMenu from './NoteMenu';
 import clone from 'lodash.clone';
-import ClickOutside from 'v-click-outside';
 
 
 function floor(value, precision){
@@ -69,10 +68,6 @@ function floor(value, precision){
 
 export default {
     name: 'PDFViewer',
-
-    directives:{
-        clickOutside: ClickOutside.directive
-    },
 
     components: {
         PDFZoom,
@@ -176,6 +171,7 @@ export default {
                     page: this.currentPage
                 }).then(res =>{
                     window.alert('note created!');
+                    this.initNote();
                 }).catch(err =>{
                     window.alert(err.response.data.msg);
                 })

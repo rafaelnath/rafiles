@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "axios": "^0.19.2",
+    "croppie": "^2.6.4",
     "intersection-observer": "^0.7.0",
     "lodash": "^4.17.15",
     "pdfjs-dist": "^2.3.200",
@@ -21,6 +22,7 @@
     "v-click-outside": "^3.0.1",
     "vue": "^2.5.2",
     "vue-clipboard2": "^0.3.1",
+    "vue-image-crop-upload": "^2.5.0",
     "vue-router": "^3.0.1"
   },
   "devDependencies": {

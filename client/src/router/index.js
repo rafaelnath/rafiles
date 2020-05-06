@@ -22,6 +22,11 @@ export default new Router({
       name: 'Login',
       component: () => import('@/components/Pages/Login')
     },
+    {
+      path: '/imgcropper',
+      name: 'ImageCropper',
+      component: () => import('@/components/CropPicture')
+    },
 
     //--------ADMIN
     {
@@ -183,6 +188,6 @@ export default new Router({
       path: '/pdfviewer',
       name: 'PDFViewer',
       component: () => import('@/components/PDFViewer/PDFViewer')
-    }
+    },
   ]
 })
