@@ -19,6 +19,9 @@ export default{
     update(params){
         return Api().put('users', params);
     },
+    updatePic(params){
+        return Api().put('users/upic', params);
+    },
     deleteUser(params){
         return Api().delete(`users?id=${params}`);
     },

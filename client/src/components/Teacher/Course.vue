@@ -49,7 +49,9 @@
                 <div class="teachers" v-if="teachers.length !== 0">
                     <h2>Teacher</h2>
                     <div class="member" v-for="(tch, index) in teachers" :key="index">
-                        <div class="m-pic"></div>
+                        <div class="m-pic">
+                            <img :src="tch.displaypic"/>
+                        </div>
                         <p class="uname">{{tch.name}}</p>
                     </div>
                 </div>
@@ -59,7 +61,9 @@
                         <template v-if="stds.users.length > 0">
                             <h3>{{stds.group}}</h3>
                             <div class="member" v-for="(std, indx) in stds.users" :key="indx">
-                                <div class="m-pic"></div>
+                                <div class="m-pic">
+                                    <img :src="`http://localhost:8082/${std.displaypic}`"/>
+                                </div>
                                 <p class="uname">{{std.name}}</p>
                             </div>
                         </template>
@@ -397,8 +401,19 @@ input:focus {
     width: 45px;
     height: 45px;
     border-radius: 100%;
-    background: #eee;
+    /* background: #999; */
+    border: 1px solid #999;
     margin-right: 15px;
+    position: relative;
+}
+img{
+    width: 40px;
+    height: 40px;
+    border-radius: 100%;
+    position: absolute;
+    top:50%;
+    left:50%;
+    transform: translate(-50%, -50%);
 }
 
 .member p{

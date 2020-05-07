@@ -3,9 +3,25 @@
     <div class="userbar">
       <div class="picture">
         <img :src="dp"/>
+        <div class="overlay" @click="show = !show">
+            <p>Change Picture</p>
+        </div>
+        <image-crop
+          field="img"
+          @crop-success="cropSuccess"
+          @crop-upload-success="cropUploadSuccess"
+          @crop-upload-fail="cropUploadFail"
+          @src-file-set="srcFileSet"
+          v-if="show"
+          v-model="show"
+          :width="300"
+          :height="300"
+          img-format="png"
+          lang-type="en"
+        />
       </div>
-      <div class="info">
-        <div class="info-wrapper">
+      <div class="info" :class="{editing: showEdit}">
+        <div class="info-wrapper" v-if="!showEdit">
           <div class="name">
             <h1>{{user.name}}</h1>
             <p>{{user.role}}</p>
@@ -14,13 +30,17 @@
             <div class="left">
               <!-- -----------------------Birthdate -->
               <div class="detail">
-                <div class="icon"></div>
-                <p class="data">{{user.birthdate.split("T")[0]}}</p>
+                <div class="icon">
+                  <img src="../../assets/bday.png"/>
+                </div>
+                <p class="data">{{user.birthdate}}</p>
               </div>
               <!-- ------------------------->
               <!-- -----------------------Email -->
               <div class="detail">
-                <div class="icon"></div>
+                <div class="icon">
+                  <img src="../../assets/mail.png"/>
+                </div>
                 <p class="data">{{user.email}}</p>
               </div>
               <!-- -------------------------->
@@ -28,13 +48,15 @@
             ><div class="right">
               <!-- -----------------------Nationality -->
               <div class="detail">
-                <div class="icon"></div>
+                <div class="icon"><img src="../../assets/globe.png"/></div>
                 <p class="data">{{user.nationality}}</p>
               </div>
               <!-- -------------------------->
               <!-- -----------------------Edit Info -->
-              <div class="button">
-                <div class="icon"></div>
+              <div class="button" @click="showEdit = true">
+                <div class="icon">
+                  <img src="../../assets/settings.png"/>
+                </div>
                 <p>Edit info</p>
               </div>
               <!-- -------------------------->
@@ -42,27 +64,34 @@
             <div style="clear:both" />
           </div>
         </div>
+        <div class="info-wrapper" v-else>
+          <edit-user @close="showEdit = false" :user="user" :uId="uId"/>
+        </div>
       </div>
       <div style="clear:both" />
     </div>
-    <div class="tab">
-      <p :class="{bright: tab === 'bp'}" @click="tab = 'bp'">Backpack</p>
-      <div class="bg bp" :class="{active: tab === 'bp'}"/>
-    </div>
-    <div class="tab">
-      <p :class="{bright: tab === 'nt'}" @click="tab = 'nt'">Notes</p>
-      <div class="bg nt" :class="{active: tab === 'nt', next: tab === 'cr'}"/>
-    </div>
-    <div class="tab">
-      <p :class="{bright: tab === 'cr'}" @click="tab = 'cr'">Courses</p>
-      <div class="bg cr" :class="{active: tab === 'cr', cr2: tab === 'bp'}"/>
-    </div>
-    <Backpack :books="user.backpack" :uId="uId"/>
+    <template v-if="!showEdit">
+      <div class="tab">
+        <p :class="{bright: tab === 'bp'}" @click="tab = 'bp'">Backpack</p>
+        <div class="bg bp" :class="{active: tab === 'bp'}"/>
+      </div>
+      <div class="tab">
+        <p :class="{bright: tab === 'nt'}" @click="tab = 'nt'">Notes</p>
+        <div class="bg nt" :class="{active: tab === 'nt', next: tab === 'cr'}"/>
+      </div>
+      <div class="tab">
+        <p :class="{bright: tab === 'cr'}" @click="tab = 'cr'">Courses</p>
+        <div class="bg cr" :class="{active: tab === 'cr', cr2: tab === 'bp'}"/>
+      </div>
+      <Backpack :books="user.backpack" :uId="uId"/>
+    </template>
   </div>
 </template>
 
 <script>
 import Backpack from "./Backpack";
+import EditUser from "./EditUser";
+import ImageCrop from "vue-image-crop-upload";
 import Api from "@/services/UserService";
 export default {
   data() {
@@ -71,11 +100,15 @@ export default {
       user: "",
       tab: 'bp',
       dp: null,
+      show: false,
+      showEdit: false,
     };
   },
 
   components:{
     Backpack,
+    ImageCrop,
+    EditUser,
   },
 
   created() {
@@ -87,9 +120,40 @@ export default {
     initData() {
       Api.get(this.uId).then(user => {
         this.user = user.data;
-        console.log(this.user.displaypic);
-        this.dp = this.user.displaypic;
+        this.dp = `http://localhost:8082/${this.user.displaypic}`;
       });
+    },
+    srcFileSet(fname, ftype, fsize){
+      console.log(fsize);
+      if(fsize > 5000000){
+        window.alert(`image can't be more than 5mb`);
+        this.show = false;
+      }
+    },
+    cropSuccess(imgUrl, field) {
+      console.log(`----crop success----`);
+      Api.updatePic({
+        id: this.uId,
+        uname: this.user.name,
+        oldpic: this.user.displaypic,
+        newpic: imgUrl.split(';base64,').pop()
+      }).then(res =>{
+        window.alert('updated :)');
+        this.initData();
+      }).catch(err =>{
+          err.response.data ? window.alert(err.response.data) :
+          window.alert(err);
+      })
+    },
+    cropUploadSuccess(jsonData, field) {
+      console.log(`----upload success----`);
+      console.log(jsonData);
+      console.log(field);
+    },
+    cropUploadFail(status, field) {
+      console.log(`----upload failed----`);
+      console.log(status);
+      console.log(field);
     }
   }
 };
@@ -114,14 +178,32 @@ export default {
   float: left;
   position: relative;
 }
-.picture img{
-  width: 88%;
-  /* background: red; */
+.picture img, .overlay, .overlay p{
   border-radius: 20px;
   position: absolute;
   top:50%;
   left:50%;
   transform: translate(-50%, -50%);
+}
+.picture img{
+  width: 88%;
+  /* background: red; */
+}
+.overlay{
+  width: 88%;
+  padding-top:88%;
+  background:#999;
+  opacity: 0;
+  transition: 0.3s ease-out;
+}
+.overlay:hover{
+  opacity: 0.8;
+  cursor: pointer;
+}
+.overlay p {
+  text-align: center;
+  font-size: 18px;
+  color:#fff;
 }
 .info {
   padding: 0 30px;
@@ -132,6 +214,7 @@ export default {
   background: rgb(241, 241, 241);
   position: relative;
   box-shadow: 0 12px 18px rgba(0, 0, 0, 0.219);
+  transition: .3s ease-in-out;
 }
 .info-wrapper{
   /* background: #000; */
@@ -140,6 +223,9 @@ export default {
   left: 50%;
   transform: translate(-50%, -50%);
   width: 90%;
+}
+.editing{
+  height: 500px;
 }
 .name,
 .details {
@@ -180,8 +266,11 @@ export default {
 .icon {
   width: 25px;
   height: 25px;
-  background: grey;
+  /* background: grey; */
   margin-right: 10px;
+}
+.icon img{
+  width: 100%;
 }
 .data{
   font-size: 20px;
@@ -195,8 +284,12 @@ export default {
   text-align: center;
   float: right;
 }
+.button:hover{
+  cursor: pointer;
+  opacity: 0.8;
+}
 .button .icon{
-  background: #fff;
+  /* background: #fff; */
   width:15px;
   height:15px;
   margin-right: 3px;

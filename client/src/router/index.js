@@ -135,7 +135,7 @@ export default new Router({
         {
           path: 'course',
           name: 'Student Course',
-          component: () => import('@/components/Student/Course')
+          component: () => import('@/components/Teacher/Course')
         },
         {
           path: 'bookviewer',

@@ -57,7 +57,7 @@
       </select>
       <select v-model="bd.month">
         <option value="" disabled selected>Month</option>
-        <option v-for="(month, index) in months" :key="index" :value="index+1">{{month}}</option>
+        <option v-for="(month, index) in months" :key="index" :value="month">{{month}}</option>
       </select>
       <select v-model="bd.year" class="last">
         <option value="" disabled selected>Year</option>
@@ -158,7 +158,7 @@ export default {
           gender: this.gender,
           birthdate: `${this.bd.day}-${this.bd.month}-${this.bd.year}`,
           role: this.role,
-          upic: this.upic
+          upic: this.upic.split(';base64,').pop()
         })
           .then(res => {
             window.alert("register succeed.");

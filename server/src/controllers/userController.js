@@ -10,6 +10,7 @@ module.exports = {
             if (result) {
                 throw new Error('email already exist');
             } else {
+                const time = new Date().getTime();
                 User.create({
                     name: req.body.name,
                     email: req.body.email,
@@ -17,11 +18,14 @@ module.exports = {
                     role: req.body.role,
                     nationality: req.body.nationality,
                     gender: req.body.gender,
-                    birthdate: new Date(req.body.birthdate),
-                    displaypic: req.body.upic,
+                    birthdate: req.body.birthdate,
+                    displaypic: `displaypics/${time}_${req.body.name}.png`,
                     // birthdate: req.body.birthdate,
                 })
                     .then(user => {
+                        fs.writeFile(`./uploads/displaypics/${time}_${req.body.name}.png`, req.body.upic, {encoding: 'base64'}, (err) => {
+                            console.log(`file created`);
+                        });
                         res.status(201).json(user);
                     }).catch(err => {
                         res.status(404).json({ msg: err.message });
@@ -30,9 +34,8 @@ module.exports = {
         }).catch(err => {
             res.status(400).json({ msg: err.message });
         })
-
-
     },
+
     login(req, res) {
         User.findOne({ email: req.body.email }).then(userFound => {
             if (!userFound) {
@@ -99,7 +102,7 @@ module.exports = {
                     email: req.body.email,
                     nationality: req.body.nationality,
                     gender: req.body.gender,
-                    birthdate: new Date(req.body.birthdate)
+                    birthdate: req.body.birthdate
                 }
 
                 User.findByIdAndUpdate(req.body.userId, updateObj)
@@ -115,6 +118,37 @@ module.exports = {
         }).catch(err => {
             res.status(400).json({ msg: err.message });
         })
+    },
+    updatePic(req, res){
+        const time = new Date().getTime();
+        let filename = `displaypics/${time}_${req.body.uname}.png`
+        fs.writeFile(`./uploads/${filename}`, req.body.newpic, {encoding: 'base64'}, (err) => {
+            if(err){
+                res.status(400).json(err)
+            } else{
+                console.log(`file created`);
+                User.findByIdAndUpdate(req.body.id, {displaypic: filename})
+                    .then(() =>{
+                        if(req.body.oldpic){
+                            fs.unlink(`./uploads/${req.body.oldpic}`, (err) =>{
+                                if (err) {
+                                    res.status(500).json({
+                                        msg: err
+                                    })
+                                } else{
+                                    console.log(`user's old pic deleted :)`);
+                                    res.status(200).json({msg: `display pic updated!`});
+                                }
+                            });
+                        } else{
+                            res.status(200).json({msg: `display pic updated!`});
+                        }
+
+                    }).catch(err => {
+                        res.status(400).json({ msg: err.message });
+                    })
+            }
+        });
     },
     changePassword(req, res) {
         User.findById(req.body.userId)

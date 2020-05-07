@@ -9,6 +9,7 @@ router.post("/register", userController.register);
 router.post("/login", userController.login);
 
 router.put("/", userController.update);
+router.put('/upic', userController.updatePic);
 router.put("/changePassword", userController.changePassword);
 router.put("/addClass", userController.addClass);
 router.put("/removeClass", userController.removeClass);

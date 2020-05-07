@@ -34,7 +34,9 @@
             <h2>Students</h2>
             <template v-if="students.length !== 0">
               <div class="member" v-for="(std, index) in students" :key="index">
-                <div class="m-pic"></div>
+                <div class="m-pic">
+                  <img :src="std.displaypic"/>
+                </div>
                 <p>{{std.name}}</p>
               </div>
             </template>
@@ -223,8 +225,8 @@ input:focus {
 }
 
 .m-pic {
-  width: 45px;
-  height: 45px;
+  width: 50px;
+  height: 50px;
   border-radius: 100%;
   background: #eee;
   margin-right: 15px;

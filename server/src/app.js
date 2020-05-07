@@ -15,6 +15,7 @@ app.use(morgan('combined'));
 app.use(bodyParser.json({limit: '5mb'})); //allow our express app to easily parse any json request that are sent in
 app.use(cors()); //enabling any website to hit this backend
 app.use(fileUpload());
+app.use(express.static('uploads'));
 
 
 
@@ -24,7 +25,8 @@ app.use(fileUpload());
 mongoose.set('useFindAndModify', false);
 
 //useNewUrlParser true to fix deprecation warnings
-mongoose.connect(`mongodb+srv://test:${process.env.DB_PASSWORD}@todo-rccud.gcp.mongodb.net/final-project-rafiles?retryWrites=true&w=majority`, {useNewUrlParser: true});
+// mongoose.connect(`mongodb+srv://test:${process.env.DB_PASSWORD}@todo-rccud.gcp.mongodb.net/final-project-rafiles?retryWrites=true&w=majority`, {useNewUrlParser: true});
+mongoose.connect(`mongodb://localhost:27017/rafiles`, {useNewUrlParser: true});
 
 
 
