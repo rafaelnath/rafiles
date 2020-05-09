@@ -1,6 +1,6 @@
 <template>
   <div class="manage-book">
-    <p>
+    <p id="nav">
       <span @click="goTo('dashboard')">dashboard</span>
     </p>
     <h2>Manage Books</h2>
@@ -8,11 +8,11 @@
     <a class="menu" @click="goTo('books/upload')">upload book</a>
     <table>
       <tr>
-        <td>Title</td>
-        <td>Author</td>
-        <td>Size</td>
-        <td>Upload date</td>
-        <td>Action</td>
+        <th>Title</th>
+        <th>Author</th>
+        <th>Size</th>
+        <th>Upload date</th>
+        <th>Action</th>
       </tr>
       <tr v-for="(book, index) in books" :key="index">
         <td>{{book.title}}</td>
@@ -49,8 +49,8 @@ export default {
       });
     },
 
-    goTo(page) {
-      window.location.href = `/admin/${page}`;
+    goTo(page){
+        this.$router.push(`/admin/${page}`)
     },
 
     searchBook() {
@@ -108,10 +108,13 @@ export default {
 <style scoped>
 .manage-book {
   background: #f1f1f1;
-  width: 70%;
-  margin: 0 auto;
+  width: calc(75% - 40px);
   padding: 20px;
+  margin: 0 auto;
   border-radius: 20px;
+}
+#nav{
+  margin-bottom: 10px;
 }
 input {
   margin-bottom: 20px;
@@ -143,11 +146,14 @@ table {
   width: 100%;
   line-height: 30px;
 }
+th{
+  text-align: left;
+}
 span {
   transition: 0.1s ease-in;
 }
 span:hover {
-  font-size: 18px;
+  letter-spacing: 2px;
   font-weight: bolder;
   cursor: pointer;
 }

@@ -1,25 +1,30 @@
 <template>
   <div class="backpack">
-    <div class="book" v-for="(book,index) in books" :key="index">
-        <div class="book-container">
-        <div class="cover">
-            <div class="cover-container">
-            <p class="title">{{book.title}}</p>
-            <p class="author">by {{book.author}}</p>
+    <template v-if="books.length > 0">
+      <div class="book" v-for="(book,index) in books" :key="index">
+          <div class="book-container">
+            <div class="cover">
+                <div class="cover-container">
+                  <p class="title">{{book.title}}</p>
+                  <p class="author">by {{book.author}}</p>
+                </div>
             </div>
-        </div>
-        <div class="desc">
-            <div class="desc-container">
-            <h3>Description</h3>
-            <p>{{book.description}}</p>
-            <div class="buttons">
-                <a class="button read" @click="readBook(book._id)">Read</a>
-                <a class="button love" @click="removeBook(book._id)">Remove</a>
+            <div class="desc">
+                <div class="desc-container">
+                  <h3>Description</h3>
+                  <p>{{book.description}}</p>
+                  <div class="buttons">
+                      <a class="button read" @click="readBook(book._id)">Read</a>
+                      <a class="button love" @click="removeBook(book._id)">Remove</a>
+                  </div>
+                </div>
             </div>
-            </div>
-        </div>
-        </div>
-    </div>
+          </div>
+      </div>
+    </template>
+    <template v-else>
+      <p class="none">There is no textbook in your backpack yet.</p>
+    </template>
   </div>
 </template>
 
@@ -60,7 +65,6 @@ export default {
 
 <style scoped>
 .backpack {
-  margin-top: 30px;
   height: 400px;
   /* background: rgb(248, 189, 189); */
   padding-top: 10px;
@@ -68,7 +72,16 @@ export default {
   border-radius: 20px;
   max-height: 500px;
   overflow: auto;
+  position: relative;
   /* background:indianred */
+}
+
+.none{
+  position: absolute;
+  top:50%;
+  left:50%;
+  transform: translate(-50%, -50%);
+  font-size: 22px;
 }
 
 .book {

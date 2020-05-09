@@ -17,6 +17,7 @@
 </template>
 
 <script>
+import Api from '@/services/UserService'
 export default {
   data() {
     return {
@@ -26,15 +27,18 @@ export default {
   },
   methods: {
     login() {
-      const checkUname = this.uname === "admin";
-      const checkPwd = this.pwd === "admin";
-      if (checkUname && checkPwd) {
-        window.alert("ciao admin ~");
-        window.location.href = "/admin/dashboard";
+      if (!this.uname || !this.pwd) {
+        window.alert("Can't login with empty field.");
       } else {
-        !checkUname
-          ? window.alert("wrong username!")
-          : window.alert("wrong password!");
+        Api.adminLogin({
+          uname: this.uname,
+          pwd: this.pwd
+        }).then(res =>{
+          this.$store.commit(`adminLogin`, res.data.token);
+          this.$router.push(`dashboard`);
+        }).catch(err =>{
+          window.alert(err.response.data.msg ? err.response.data.msg : err);
+        })
       }
     }
   }

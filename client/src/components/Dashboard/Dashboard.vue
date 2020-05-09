@@ -1,11 +1,13 @@
 <template>
   <div class="dashboard">
     <div class="userbar">
-      <div class="picture">
-        <img :src="dp"/>
-        <div class="overlay" @click="show = !show">
-            <p>Change Picture</p>
-        </div>
+      <div class="picture" :class="{hide: showEdit}">
+        <template v-if="!showEdit">
+          <img :src="dp"/>
+          <div class="overlay" @click="show = !show">
+              <p>Change Picture</p>
+          </div>
+        </template>
         <image-crop
           field="img"
           @crop-success="cropSuccess"
@@ -23,7 +25,7 @@
       <div class="info" :class="{editing: showEdit}">
         <div class="info-wrapper" v-if="!showEdit">
           <div class="name">
-            <h1>{{user.name}}</h1>
+            <h1>{{user.name.length > 16 ? user.name.substring(0, 16) + '...' : user.name}}</h1>
             <p>{{user.role}}</p>
           </div
           ><div class="details">
@@ -49,7 +51,8 @@
               <!-- -----------------------Nationality -->
               <div class="detail">
                 <div class="icon"><img src="../../assets/globe.png"/></div>
-                <p class="data">{{user.nationality}}</p>
+                <p class="data">{{user.nationality.length > 27 ? user.nationality.substring(0, 27) + '...' : user.nationality}}</p>
+                <!-- <p class="data">{{`United States of Americaaaa`}}</p> -->
               </div>
               <!-- -------------------------->
               <!-- -----------------------Edit Info -->
@@ -83,13 +86,16 @@
         <p :class="{bright: tab === 'cr'}" @click="tab = 'cr'">Courses</p>
         <div class="bg cr" :class="{active: tab === 'cr', cr2: tab === 'bp'}"/>
       </div>
-      <Backpack :books="user.backpack" :uId="uId"/>
+      <div style="width:100%;height:20px;"/>
+      <Backpack :books="user.backpack" :uId="uId" v-if="tab === 'bp'"/>
+      <Notes :uId="uId" v-if="tab === 'nt'"/>
     </template>
   </div>
 </template>
 
 <script>
 import Backpack from "./Backpack";
+import Notes from "./Notes";
 import EditUser from "./EditUser";
 import ImageCrop from "vue-image-crop-upload";
 import Api from "@/services/UserService";
@@ -109,6 +115,7 @@ export default {
     Backpack,
     ImageCrop,
     EditUser,
+    Notes,
   },
 
   created() {
@@ -164,6 +171,7 @@ export default {
   padding-top: 50px;
   width: 88%;
   margin: 0 auto;
+  /* background: lavender; */
 }
 
 .userbar{
@@ -177,6 +185,10 @@ export default {
   box-shadow: 0 12px 18px rgba(0, 0, 0, 0.219);
   float: left;
   position: relative;
+  transition: .2s ease-in-out;
+}
+.hide{
+  width: 0;
 }
 .picture img, .overlay, .overlay p{
   border-radius: 20px;
@@ -225,6 +237,7 @@ export default {
   width: 90%;
 }
 .editing{
+  width: 95%;
   height: 500px;
 }
 .name,
@@ -233,27 +246,27 @@ export default {
   vertical-align: middle;
 }
 .name{
-  width: 50%;
+  width: 40%;
 }
 .details{
-  width:50%;
+  width:60%;
   /* background:lavender; */
 }
 .name h1 {
-  font-size: 45px;
+  font-size: 35px;
   margin-bottom: 5px;
 }
 .name p {
-  font-size: 28px;
+  font-size: 22px;
 }
 .right{
   float:right;
   /* background:#000; */
-  width: 30%;
+  width: 50%;
 }
 .left{
   float:left;
-  width:68%;
+  width:50%;
   /* background:red; */
 }
 .detail:nth-child(odd){
@@ -273,7 +286,7 @@ export default {
   width: 100%;
 }
 .data{
-  font-size: 20px;
+  font-size: 16px;
 }
 .button{
   /* display: inline-block; */

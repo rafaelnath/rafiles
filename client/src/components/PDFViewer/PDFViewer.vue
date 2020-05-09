@@ -218,9 +218,18 @@ export default {
 
     created(){
         this.uId = localStorage.getItem("userId");
+        if(this.$route.query.page){
+            this.currentPage = this.$route.query.page;
+            console.log(`yippie`)
+        }
         this.initBook();
         // this.initNote();
     },
+
+    mounted(){
+        console.log(this.currentPage);
+    },
+        
 
     watch:{
         url() { //when url empty

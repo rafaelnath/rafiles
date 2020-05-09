@@ -1,17 +1,17 @@
 <template>
   <div class="admin-dashboard">
-    <p>
+    <p id="nav">
       <span @click="goTo('dashboard')">dashboard</span>
     </p>
     <h2>Manage Users</h2>
     <input type="text" placeholder="search user..." @input="searchUser" v-model="search" />
     <table>
       <tr>
-        <td>Full name</td>
-        <td>Email address</td>
-        <td>Role</td>
-        <td>Register date</td>
-        <td>Action</td>
+        <th>Full name</th>
+        <th>Email address</th>
+        <th>Role</th>
+        <th>Register date</th>
+        <th>Action</th>
       </tr>
       <tr v-for="(user, index) in users" :key="index">
         <td>{{user.name}}</td>
@@ -47,8 +47,8 @@ export default {
       });
     },
 
-    goTo(page) {
-      window.location.href = `/admin/${page}`;
+    goTo(page){
+        this.$router.push(`/admin/${page}`)
     },
 
     searchUser() {
@@ -80,14 +80,22 @@ export default {
 <style scoped>
 .admin-dashboard {
   background: #f1f1f1;
-  width: 70%;
-  margin: 0 auto;
+  width: calc(75% - 40px);
   padding: 20px;
+  margin: 0 auto;
   border-radius: 20px;
+  height: calc(100vh - 200px);
+}
+#nav{
+  margin-bottom: 5px;
+}
+
+h2{
+  margin-bottom: 20px;
 }
 input {
-  margin-bottom: 20px;
-  width: 60%;
+  margin-bottom: 10px;
+  width: calc(100% - 10px);
   padding: 0px 5px;
   font-size: 20px;
   line-height: 30px;
@@ -110,9 +118,13 @@ span {
   transition: 0.1s ease-in;
 }
 span:hover {
-  font-size: 18px;
+  letter-spacing: 2px;
   font-weight: bolder;
   cursor: pointer;
+}
+th{
+  text-align: left;
+  padding-bottom: 10px;
 }
 td a{
     text-decoration: none;

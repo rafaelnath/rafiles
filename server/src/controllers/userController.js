@@ -23,7 +23,7 @@ module.exports = {
                     // birthdate: req.body.birthdate,
                 })
                     .then(user => {
-                        fs.writeFile(`./uploads/displaypics/${time}_${req.body.name}.png`, req.body.upic, {encoding: 'base64'}, (err) => {
+                        fs.writeFile(`./uploads/displaypics/${time}_${req.body.name}.png`, req.body.upic, { encoding: 'base64' }, (err) => {
                             console.log(`file created`);
                         });
                         res.status(201).json(user);
@@ -34,6 +34,17 @@ module.exports = {
         }).catch(err => {
             res.status(400).json({ msg: err.message });
         })
+    },
+
+    adminlogin(req, res){
+        if(req.body.uname !== process.env.ADMIN_UNAME){
+            res.status(400).json({msg:`Incorrect username.`})
+        } else if(req.body.pwd !== process.env.ADMIN_PASSWORD){
+            res.status(400).json({msg: `Incorrect password.`})
+        } else{
+            let token = jwt.sign({uname: process.env.ADMIN_UNAME, pwd: process.env.ADMIN_PASSWORD}, process.env.ADMIN_SECRET_KEY);
+            res.status(200).json({token})
+        }
     },
 
     login(req, res) {
@@ -96,15 +107,26 @@ module.exports = {
     },
     update(req, res) {
         User.findOne({ email: req.body.email }).then((result) => {
-            if (result._id.toString() === req.body.userId) {
-                let updateObj = {
-                    name: req.body.name,
-                    email: req.body.email,
-                    nationality: req.body.nationality,
-                    gender: req.body.gender,
-                    birthdate: req.body.birthdate
+            let updateObj = {
+                name: req.body.name,
+                email: req.body.email,
+                nationality: req.body.nationality,
+                gender: req.body.gender,
+                birthdate: req.body.birthdate
+            }
+            if (result) {
+                if (result._id.toString() === req.body.userId) {
+                    User.findByIdAndUpdate(req.body.userId, updateObj)
+                        .then(updatedUser => {
+                            res.status(200).json(updatedUser);
+                        })
+                        .catch(err => {
+                            res.status(400).json({ msg: err.message });
+                        })
+                } else {
+                    throw new Error(`Sorry, that email address is already used! :(`);
                 }
-
+            } else {
                 User.findByIdAndUpdate(req.body.userId, updateObj)
                     .then(updatedUser => {
                         res.status(200).json(updatedUser);
@@ -112,36 +134,34 @@ module.exports = {
                     .catch(err => {
                         res.status(400).json({ msg: err.message });
                     })
-            } else {
-                throw new Error('email already exist');
             }
         }).catch(err => {
             res.status(400).json({ msg: err.message });
         })
     },
-    updatePic(req, res){
+    updatePic(req, res) {
         const time = new Date().getTime();
         let filename = `displaypics/${time}_${req.body.uname}.png`
-        fs.writeFile(`./uploads/${filename}`, req.body.newpic, {encoding: 'base64'}, (err) => {
-            if(err){
+        fs.writeFile(`./uploads/${filename}`, req.body.newpic, { encoding: 'base64' }, (err) => {
+            if (err) {
                 res.status(400).json(err)
-            } else{
+            } else {
                 console.log(`file created`);
-                User.findByIdAndUpdate(req.body.id, {displaypic: filename})
-                    .then(() =>{
-                        if(req.body.oldpic){
-                            fs.unlink(`./uploads/${req.body.oldpic}`, (err) =>{
+                User.findByIdAndUpdate(req.body.id, { displaypic: filename })
+                    .then(() => {
+                        if (req.body.oldpic) {
+                            fs.unlink(`./uploads/${req.body.oldpic}`, (err) => {
                                 if (err) {
                                     res.status(500).json({
                                         msg: err
                                     })
-                                } else{
+                                } else {
                                     console.log(`user's old pic deleted :)`);
-                                    res.status(200).json({msg: `display pic updated!`});
+                                    res.status(200).json({ msg: `display pic updated!` });
                                 }
                             });
-                        } else{
-                            res.status(200).json({msg: `display pic updated!`});
+                        } else {
+                            res.status(200).json({ msg: `display pic updated!` });
                         }
 
                     }).catch(err => {
@@ -166,46 +186,46 @@ module.exports = {
                             throw new Error(err);
                         })
                 } else {
-                    throw new Error('incorrect old password');
+                    throw new Error('Current password incorrect!');
                 }
             }).catch(err => {
                 res.status(400).json({ msg: err.message })
             })
     },
-    addBook(req, res){
-        User.findById(req.body.userId).then(user=>{
-            if(user.backpack.includes(req.body.bookId)){
+    addBook(req, res) {
+        User.findById(req.body.userId).then(user => {
+            if (user.backpack.includes(req.body.bookId)) {
                 throw new Error("You already have this book in your backpack.")
-            } else{
-                User.findByIdAndUpdate(req.body.userId, {$push: {backpack: req.body.bookId}})
-                    .then(userfound =>{
+            } else {
+                User.findByIdAndUpdate(req.body.userId, { $push: { backpack: req.body.bookId } })
+                    .then(userfound => {
                         res.status(200).json({
                             msg: 'book added',
                             data: userfound
                         })
                     })
-                    .catch(err =>{
+                    .catch(err => {
                         res.status(400).json({
                             msg: err.message
                         })
                     })
             }
         })
-        .catch(err =>{
-            res.status(400).json({
-                msg: err.message
+            .catch(err => {
+                res.status(400).json({
+                    msg: err.message
+                })
             })
-        })
     },
-    removeBook(req, res){
-        User.findByIdAndUpdate(req.body.userId, {$pull: {backpack: req.body.bookId}})
-            .then(user =>{
+    removeBook(req, res) {
+        User.findByIdAndUpdate(req.body.userId, { $pull: { backpack: req.body.bookId } })
+            .then(user => {
                 res.status(200).json({
                     msg: 'book removed',
                     data: user
                 })
             })
-            .catch(err =>{
+            .catch(err => {
                 res.status(400).json({
                     msg: err.message
                 })

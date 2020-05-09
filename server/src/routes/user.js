@@ -8,9 +8,11 @@ router.get("/find", userController.find);
 router.post("/register", userController.register);
 router.post("/login", userController.login);
 
+router.post("/adminlogin", userController.adminlogin);
+
 router.put("/", userController.update);
 router.put('/upic', userController.updatePic);
-router.put("/changePassword", userController.changePassword);
+router.put("/password", userController.changePassword);
 router.put("/addClass", userController.addClass);
 router.put("/removeClass", userController.removeClass);
 

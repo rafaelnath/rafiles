@@ -30,7 +30,7 @@ export default new Router({
 
     //--------ADMIN
     {
-      path: '/admin-login',
+      path: '/admin/login',
       name: 'Admin Login',
       component: () => import('@/components/Admin/Login')
     },
@@ -43,36 +43,54 @@ export default new Router({
         {
           path: 'dashboard',
           name: 'Admin Dashboard',
-          component: () => import('@/components/Admin/Dashboard')
+          component: () => import('@/components/Admin/Dashboard'),
+          meta:{
+            adminLoginRequired: true
+          },
         },
 
         //--------------------------------------------- [USER]
         {
           path: 'users',
           name: 'Manage User',
-          component: () => import('@/components/Admin/ManageUser')
+          component: () => import('@/components/Admin/ManageUser'),
+          meta:{
+            adminLoginRequired: true
+          },
         },
         {
           path: 'edit-user/:id',
           name: 'Edit User',
-          component: () => import('@/components/Admin/EditUser')
+          component: () => import('@/components/Admin/EditUser'),
+          meta:{
+            adminLoginRequired: true
+          },
         },
 
         //--------------------------------------------- [BOOK]
         {
           path: 'books',
           name: 'Manage Books',
-          component: () => import('@/components/Admin/Book/ManageBook')
+          component: () => import('@/components/Admin/Book/ManageBook'),
+          meta:{
+            adminLoginRequired: true
+          },
         },
         {
           path: 'books/upload',
           name: 'Upload Book',
-          component: () => import('@/components/Admin/Book/UploadBook')
+          component: () => import('@/components/Admin/Book/UploadBook'),
+          meta:{
+            adminLoginRequired: true
+          },
         },
         {
           path: 'books/edit/:id',
           name: 'Edit Book',
-          component: () => import('@/components/Admin/Book/EditBook')
+          component: () => import('@/components/Admin/Book/EditBook'),
+          meta:{
+            adminLoginRequired: true
+          },
         },
 
         //--------------------------------------------- [CLASS]

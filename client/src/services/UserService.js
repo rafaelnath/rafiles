@@ -22,6 +22,9 @@ export default{
     updatePic(params){
         return Api().put('users/upic', params);
     },
+    changePassword(params){
+        return Api().put(`users/password`, params);
+    },
     deleteUser(params){
         return Api().delete(`users?id=${params}`);
     },
@@ -32,4 +35,8 @@ export default{
     removeBook(params){
         return Api().put(`users/removeBook`, params);
     },
+
+    adminLogin(params){
+        return Api().post(`users/adminlogin`, params);
+    }
 }

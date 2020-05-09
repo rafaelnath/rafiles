@@ -2,20 +2,23 @@
   <div class="add-course">
     <p class="title">Add from existing courses</p>
     <input type="text" placeholder="search courses..." @input="searchCourse" v-model="search" />
-    <div class="courses" v-for="(course, index) in courses" :key="index">
-      <div class="cLeft">
-        <p class="cName">{{course.name}}</p>
-        <!-- <div class="teacher" v-if="course.users.length !== 0"> -->
-        <div class="teacher">
-          <p>Teacher:</p>
-          <p v-if="course.users.length !== 0">{{course.users}}</p>
-          <p v-else>none</p>
+    <div class="course-container">
+      <div class="courses" v-for="(course, index) in courses" :key="index">
+        <div class="cLeft">
+          <p class="cName">{{course.name}}</p>
+          <!-- <div class="teacher" v-if="course.users.length !== 0"> -->
+          <div class="teacher">
+            <p>Teacher:</p>
+            <p v-if="course.users.length !== 0">{{course.users}}</p>
+            <p v-else>none</p>
+          </div>
+        </div>
+        <div class="cRight">
+          <p class="mini-button accept" @click="add(course._id)">add</p>
         </div>
       </div>
-      <div class="cRight">
-        <p class="mini-button accept" @click="add(course._id)">add</p>
-      </div>
     </div>
+
   </div>
 </template>
 
@@ -156,10 +159,16 @@ button:hover {
   color: #f1f1f1;
 }
 
+.course-container{
+  /* background: lavender; */
+  height: 180px;
+  overflow: auto;
+}
+
 .courses {
   background: #ccc;
   border-radius: 20px;
-  padding: 0 10px;
+  padding: 10px 15px;
   margin-bottom: 10px;
   margin-top: 20px;
   width: 88%;
@@ -177,7 +186,7 @@ button:hover {
 .cName {
   font-size: 25px;
   font-weight: bold;
-  margin-bottom: -10px;
+  margin-bottom: 10px;
 }
 .teacher p {
   display: inline-block;

@@ -10,6 +10,9 @@ export default{
     get(params){
         return Api().get(`note/find?uid=${params.uid}&bid=${params.bid}&page=${params.page}`)
     },
+    getByAuthor(params){
+        return Api().get(`note/byAuthor?uid=${params}`)
+    },
     update(params){
         return Api().put(`note`, params);
     },

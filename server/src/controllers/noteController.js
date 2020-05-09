@@ -68,17 +68,17 @@ module.exports = {
             res.status(400).json(err.message);
         })
     },
-    // findFromBook(req,res){
-    //     Note.findOne({
-    //         author: req.query.uid,
-    //         bookId: req.query.bid,
-    //         page: {$in: req.query.page}
-    //     }).then(note =>{
-    //         res.status(200).json(note);
-    //     }).catch(err =>{
-    //         res.status(400).json(err.message);
-    //     })
-    // },
+    findByAuthor(req,res){
+        Note.find({
+            author: req.query.uid
+        })
+        .populate('book', 'title')
+        .then(note =>{
+            res.status(200).json(note);
+        }).catch(err =>{
+            res.status(400).json(err.message);
+        })
+    },
     update(req, res) {
         let noteObj = {
             title: req.body.title,

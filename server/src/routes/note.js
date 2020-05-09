@@ -5,6 +5,7 @@ router.post('/', noteController.create);
 
 router.get('/', noteController.findAll);
 router.get('/find', noteController.find);
+router.get('/byAuthor', noteController.findByAuthor);
 
 router.put('/', noteController.update);
 router.put('/addPage', noteController.addPage);

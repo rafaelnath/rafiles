@@ -1,13 +1,13 @@
 <template>
   <div class="add-major">
     <div class="left">
-      <p>
+      <p id="nav">
         <span @click="goTo('dashboard')">dashboard</span> /
         <span @click="goTo('classes')">manage class</span>
       </p>
 
       <h1>{{title}}</h1>
-      <p>Class name</p>
+      <p id="className">Class name</p>
       <input type="text" v-model="cData.name" placeholder="Enter class's name" />
 
       <p style="fontWeight:bold; fontSize:28px; marginBottom:10px">Courses</p>
@@ -21,23 +21,24 @@
         <add-course />
       </div>
 
-      <div v-else-if="menu === ''" class="courses" v-for="(course, index) in courses" :key="index">
-        <div class="cLeft">
-          <p class="cName" @click="goTo(`courses/course/${course._id}`)">{{course.name}}</p>
-          <!-- <div class="teacher" v-if="course.users.length !== 0"> -->
-          <div class="teacher">
-            <p>Teacher:</p>
-            <p v-if="course.users.length !== 0">{{course.users}}</p>
-            <p v-else>none</p>
+      <div class="course-container" v-else-if="menu === ''">
+        <div class="courses" v-for="(course, index) in courses" :key="index">
+          <div class="cLeft">
+            <p class="cName" @click="goTo(`courses/course/${course._id}`)">{{course.name}}</p>
+            <!-- <div class="teacher" v-if="course.users.length !== 0"> -->
+            <div class="teacher">
+              <p>Teacher:</p>
+              <p v-if="course.users.length !== 0">{{course.users}}</p>
+              <p v-else>none</p>
+            </div>
+          </div>
+          <div class="cRight">
+            <p @click="removeCourse(course._id, course.name)">remove</p>
           </div>
         </div>
-        <div class="cRight">
-          <p @click="removeCourse(course._id, course.name)">remove</p>
-        </div>
       </div>
-    </div>
 
-    <div class="right">
+    </div><div class="right">
       <p style="fontWeight:bold; fontSize:28px; marginBottom:10px">Users</p>
       <p class="adduser" @click="goTo(`classes/add-user/${cData._id}/${title}`)">add user</p>
 
@@ -116,8 +117,8 @@ export default {
   },
 
   methods: {
-    goTo(page) {
-      window.location.href = `/admin/${page}`;
+    goTo(page){
+        this.$router.push(`/admin/${page}`)
     },
 
     openMenu(menu) {
@@ -279,10 +280,20 @@ export default {
 <style scoped>
 .add-major {
   background: #f1f1f1;
-  width: 70%;
-  margin: 0 auto;
+  width: calc(75% - 40px);
   padding: 20px;
+  margin: 0 auto;
   border-radius: 20px;
+}
+#nav{
+  margin-bottom: 10px;
+}
+h1{
+  margin-bottom: 20px;
+}
+#className{
+  font-weight: bold;
+  margin-bottom: 5px;
 }
 input[type="text"] {
   margin-bottom: 20px;
@@ -309,7 +320,7 @@ span {
   transition: 0.1s ease-in;
 }
 span:hover {
-  font-size: 18px;
+  letter-spacing: 2px;
   font-weight: bolder;
   cursor: pointer;
 }
@@ -336,11 +347,12 @@ button:hover {
   width: 62%;
 }
 .right {
-  width: 30%;
+  width: calc(38% - 80px);
+  margin-left: 40px;
   background: #c4c4c4;
-  padding: 0 20px;
+  padding: 20px;
   border-radius: 20px;
-  min-height: 400px;
+  height: 505px;
 }
 .adduser {
   text-align: right;
@@ -352,6 +364,7 @@ button:hover {
 
 ul li {
   line-height: 30px;
+  list-style-type: none;
 }
 
 .mini-button {
@@ -383,10 +396,16 @@ ul li {
   width: 50%;
 }
 
+.course-container{
+  height: 320px;
+  overflow: auto;
+  /* background: lavender; */
+}
+
 .courses {
   background: #ccc;
   border-radius: 20px;
-  padding: 0 10px;
+  padding: 10px 15px;
   margin-bottom: 10px;
   margin-top: 20px;
   width: 88%;
@@ -413,7 +432,7 @@ ul li {
 .cName {
   font-size: 25px;
   font-weight: bold;
-  margin-bottom: -10px;
+  margin-bottom: 3px;
 }
 .cName:hover{
   cursor: pointer;

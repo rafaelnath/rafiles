@@ -1,6 +1,6 @@
 <template>
   <div class="add-major">
-    <p>
+    <p id="nav">
       <span @click="goTo('dashboard')">dashboard</span> /
       <span @click="goTo('classes')">manage class</span> /
       <span @click="goTo(`classes/class/${classId}`)">{{this.$route.params.cName}}</span>
@@ -60,8 +60,8 @@ export default {
   },
 
   methods: {
-    goTo(page) {
-      window.location.href = `/admin/${page}`;
+    goTo(page){
+        this.$router.push(`/admin/${page}`)
     },
 
     initData() {
@@ -117,6 +117,9 @@ export default {
   padding: 20px;
   border-radius: 20px;
 }
+#nav{
+  margin-bottom: 10px;
+}
 input[type="text"] {
   margin-bottom: 20px;
   width: 60%;
@@ -142,7 +145,7 @@ span {
   transition: 0.1s ease-in;
 }
 span:hover {
-  font-size: 18px;
+  letter-spacing: 2px;
   font-weight: bolder;
   cursor: pointer;
 }

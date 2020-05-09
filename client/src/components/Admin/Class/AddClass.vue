@@ -1,13 +1,13 @@
 <template>
   <div class="add-major">
-    <p>
+    <p id="nav">
       <span @click="goTo('dashboard')">dashboard</span> /
       <span @click="goTo('classes')">manage class</span>
     </p>
 
     <h1>Add Class</h1>
-    <p>to {{this.$route.params.majorName}}</p>
-    <p>Class name</p>
+    <p id="major">to {{this.$route.params.majorName}}</p>
+    <p id="className">Class name</p>
     <input type="text" v-model="name" placeholder="Enter class's name" />
     <a @click="addClass">Add</a>
   </div>
@@ -25,8 +25,8 @@ export default {
   },
 
   methods: {
-    goTo(page) {
-      window.location.href = `/admin/${page}`;
+    goTo(page){
+        this.$router.push(`/admin/${page}`)
     },
     addClass() {
       Api.createClass({
@@ -58,10 +58,24 @@ export default {
 <style scoped>
 .add-major {
   background: #f1f1f1;
-  width: 70%;
-  margin: 0 auto;
+  width: calc(75% - 40px);
   padding: 20px;
+  margin: 0 auto;
   border-radius: 20px;
+}
+#nav{
+  margin-bottom: 10px;
+}
+h1{
+  margin-bottom: 5px;
+}
+#major{
+  margin-left: 10px;
+  margin-bottom: 20px;
+}
+#className{
+  font-weight: bold;
+  margin-bottom: 10px;
 }
 input[type="text"] {
   margin-bottom: 20px;
@@ -88,7 +102,7 @@ span {
   transition: 0.1s ease-in;
 }
 span:hover {
-  font-size: 18px;
+  letter-spacing: 2px;
   font-weight: bolder;
   cursor: pointer;
 }

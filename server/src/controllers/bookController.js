@@ -2,7 +2,7 @@ const Book = require('../models/book');
 const mongoose = require('mongoose');
 const fs = require('fs');
 
-const filepath = './uploads'
+const filepath = './uploads/textbooks'
 
 module.exports = {
     upload(req, res) {
@@ -18,7 +18,7 @@ module.exports = {
         const time = new Date().getTime();
         const filename = `${time}_${data.name}`
 
-        data.mv(`./uploads/${filename}`, function (err) {
+        data.mv(`${filepath}/${filename}`, function (err) {
             if (err) {
                 res.status(500).send(err);
             } else {
