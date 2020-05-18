@@ -6,15 +6,16 @@
       </div>
       <div class="courses">
         <input type="text" placeholder="Search course, teacher..." />
+        <p>*double-click to open course</p>
         <div class="list">
           <div
             class="course"
             v-for="(course, index) in courses"
             :key="index"
             @dblclick="openCourse(course._id)"
-            @click="peekCourse(course.users)"
+            @click="peekCourse(course.books)"
           >
-            <div class="pic"></div>
+            <!-- @click="peekCourse(course.users)" -->
             <div class="info">
               <p class="title">{{course.name}}</p>Teacher:
               <p class="teacher" v-for="(user, indx) in course.users" :key="indx">
@@ -30,18 +31,31 @@
         </div>
       </div><div class="members">
         <div class="members-container">
-          <template v-if="students.length !== 0">
-            <h2>Students</h2>
-            <template v-if="students.length !== 0">
-              <div class="member" v-for="(std, index) in students" :key="index">
-                <div class="m-pic">
-                  <img :src="std.displaypic"/>
-                </div>
-                <p>{{std.name}}</p>
+          <template v-if="peek">
+            <!-- <h2>Extra Students</h2> -->
+            <h2>Text Books</h2>
+            <!-- <template v-if="students.length !== 0"> -->
+            <template v-if="books.length !== 0">
+              <!-- <div class="member" v-for="(std, index) in students" :key="index"> -->
+              <div class="member" v-for="(book, index) in books" :key="index">
+                <!-- <div class="m-pic">
+                    <template v-if="std.displaypic">
+                        <img :src="`http://localhost:8082/${std.displaypic}`"/>
+                    </template>
+                    <template v-else>
+                        <template v-if="std.role === 'teacher'">
+                            <img src="../../assets/teacher-def.png"/>
+                        </template>
+                        <template v-else>
+                            <img src="../../assets/student-def.png"/>
+                        </template>
+                    </template>
+                </div> -->
+                <p>{{book.title}}</p>
               </div>
             </template>
             <template v-else>
-              <p class="msg">No user</p>
+              <p class="msg">None</p>
             </template>
           </template>
           <template v-else>
@@ -67,12 +81,23 @@ export default {
       uclass: "",
       courses: [],
       students: [],
-      peek: false
+      peek: false,
+      role: '',
+      cid: '',
+      books: [],
     };
   },
 
   created() {
     this.uId = localStorage.getItem("userId");
+
+    this.role = localStorage.getItem("role");
+
+    if(this.role === 'teacher'){
+      // window.alert(`boom`);
+      this.cid = this.$route.query.cid;
+    }
+
     this.initData();
   },
 
@@ -82,26 +107,42 @@ export default {
     },
     initData() {
       this.peek = false;
-      UserApi.get(this.uId).then(user => {
-        this.uclass = user.data.class[0];
-        this.initCourses(this.uclass._id);
-      });
+      if(this.role === 'teacher'){
+        ClassApi.getClass(this.cid)
+          .then(res =>{
+            this.uclass = res.data;
+          }).catch(err =>{
+            window.alert(`something went wrong`);
+            console.log(err.response.data ? err.response.data : err);
+          })
+        this.initCourses(this.cid);
+      }else{
+        UserApi.get(this.uId).then(user => {
+          this.uclass = user.data.class[0];
+          this.initCourses(this.uclass._id);
+        });
+      }
     },
     initCourses(cId) {
       ClassApi.getAllCourse(cId).then(courses => {
         this.courses = courses.data;
-        console.log(this.courses);
+        // console.log(this.courses);
       });
     },
-    peekCourse(users) {
+    peekCourse(books) {
       this.peek = true;
-      this.students = [];
-      users.forEach(user => {
-        if (user.role === "student") {
-          this.students.push(user);
-        }
-      });
+      this.books = books;
+      console.log(books);
     },
+    // peekCourse(users) {
+    //   this.peek = true;
+    //   this.students = [];
+    //   users.forEach(user => {
+    //     if (user.role === "student") {
+    //       this.students.push(user);
+    //     }
+    //   });
+    // },
     openCourse(cId) {
       this.$router.push({ path: "course", query: { cId: cId } });
     }
@@ -173,18 +214,6 @@ input:focus {
   box-shadow: 0 8px 6px rgba(0, 0, 0, 0.171);
   transform: translateY(-5px);
 }
-.pic,
-.info {
-  display: inline-block;
-  vertical-align: middle;
-}
-.pic {
-  width: 80px;
-  height: 80px;
-  background: #eee;
-  border-radius: 100%;
-  margin-right: 30px;
-}
 .info .title {
   font-weight: bold;
   font-size: 28px;
@@ -224,14 +253,24 @@ input:focus {
   vertical-align: middle;
 }
 
-.m-pic {
-  width: 50px;
-  height: 50px;
-  border-radius: 100%;
-  background: #eee;
-  margin-right: 15px;
-}
 
+.m-pic{
+    width: 45px;
+    height: 45px;
+    border-radius: 100%;
+    border: 1px solid #999;
+    margin-right: 15px;
+    position: relative;
+}
+.m-pic img{
+    width: 40px;
+    height: 40px;
+    border-radius: 100%;
+    position: absolute;
+    top:50%;
+    left:50%;
+    transform: translate(-50%, -50%);
+}
 .member p {
   font-size: 22px;
 }

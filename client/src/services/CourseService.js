@@ -48,4 +48,8 @@ export default{
     joinCourse(params){
         return Api().put(`course/join`, params);
     },
+
+    deleteCourse(params){
+        return Api().delete(`course?id=${params}`)
+    }
 }

@@ -1,17 +1,19 @@
 <template>
   <div class="add-book">
     <input type="text" placeholder="search titles, authors..." @input="searchBook" v-model="search" />
-    <div class="courses" v-for="(book, index) in books" :key="index">
-      <div class="cLeft">
-        <p class="cName">{{book.title}}</p>
-        <div class="teacher">
-          <p>Author:</p>
-          <p v-if="book.author">{{book.author}}</p>
-          <p v-else>none</p>
+    <div class="container">
+      <div class="courses" v-for="(book, index) in books" :key="index">
+        <div class="cLeft">
+          <p class="cName">{{book.title}}</p>
+          <div class="teacher">
+            <p>Author:</p>
+            <p v-if="book.author">{{book.author}}</p>
+            <p v-else>none</p>
+          </div>
+        </div
+        ><div class="cRight">
+          <p class="mini-button accept" @click="add(book._id)">add</p>
         </div>
-      </div>
-      <div class="cRight">
-        <p class="mini-button accept" @click="add(book._id)">add</p>
       </div>
     </div>
   </div>
@@ -32,7 +34,14 @@ export default {
     };
   },
 
+  props:{
+    cid: String,
+  },
+
   created() {
+    if(this.$route.params.id){
+      this.cid = this.$route.params.id;
+    }
     this.initData();
   },
 
@@ -43,11 +52,11 @@ export default {
 
     add(id) {
       Api.addBookToCourse({
-        courseId: this.$route.params.id,
+        courseId: this.cid,
         bookId: id
       })
         .then(() => {
-          this.addCB(this.$route.params.id, id);
+          this.addCB(this.cid, id);
         })
         .catch(err => {
           window.alert(err.response.data.msg);
@@ -73,7 +82,7 @@ export default {
       BookApi.getAll().then(res => {
         this.books = [];
         _.forEach(res.data.data, book => {
-          if (!book.courses.includes(this.$route.params.id)) {
+          if (!book.courses.includes(this.cid)) {
             this.books.push(book);
           }
         });
@@ -86,7 +95,7 @@ export default {
         BookApi.searchBook(this.search).then(res => {
           this.books = [];
           _.forEach(res.data.data, book => {
-            if (!book.courses.includes(this.$route.params.id)) {
+            if (!book.courses.includes(this.cid)) {
               this.books.push(book);
             }
           });
@@ -104,6 +113,8 @@ export default {
   margin-top: 20px;
   border-radius: 20px;
   padding: 20px;
+  height: 320px;
+  min-height: 280px;
 }
 .title {
   display: inline-block;
@@ -145,7 +156,7 @@ button:hover {
 }
 
 .mini-button {
-  padding: 3px 15px;
+  padding: 6px;
   background: rgb(170, 170, 170);
   border-radius: 20px;
   transition: 0.2s ease-in-out;
@@ -158,10 +169,16 @@ button:hover {
   color: #f1f1f1;
 }
 
+.container{
+  height: 260px;
+  overflow: auto;
+  /* background: darkgoldenrod; */
+}
+
 .courses {
   background: #ccc;
-  border-radius: 20px;
-  padding: 0 10px;
+  border-radius: 10px;
+  padding: 10px 15px;
   margin-bottom: 10px;
   margin-top: 20px;
   width: 88%;
@@ -173,13 +190,17 @@ button:hover {
 }
 
 .cLeft {
-  width: 80%;
+  width: 85%;
+}
+.cRight{
+  width: 15%;
+  text-align: center;
 }
 
 .cName {
   font-size: 20px;
   font-weight: bold;
-  margin-bottom: -10px;
+  margin-bottom: 5px;
 }
 .teacher p {
   display: inline-block;

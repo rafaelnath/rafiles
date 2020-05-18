@@ -80,5 +80,12 @@ export default{
     },
     removeClassFromCourse(params){
         return Api().put(`course/removeClass`, params);
-    }
+    },
+
+    deleteMajor(params){
+        return Api().delete(`major?id=${params}`)
+    },
+    deleteClass(params){
+        return Api().delete(`class?id=${params}`)
+    },
 }

@@ -17,6 +17,13 @@ router.beforeEach((to, from, next) =>{
       next('/admin/login');
     }
   }
+  if(to.meta.loginRequired){
+    if(store.getters.getUserToken){
+      next();
+    } else {
+      next('/login');
+    }
+  }
   next();
 })
 

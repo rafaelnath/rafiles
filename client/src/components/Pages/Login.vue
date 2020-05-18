@@ -3,12 +3,12 @@
     <h1>Login</h1>
 
     <p>Email Address</p>
-    <input type="email" placeholder="Enter your email." v-model="email" />
+    <input type="email" @keyup.enter="login" placeholder="Enter your email." v-model="email" />
     <br />
     <br />
 
     <p>Password</p>
-    <input type="password" placeholder="Enter your password." v-model="pwd" />
+    <input type="password" @keyup.enter="login" placeholder="Enter your password." v-model="pwd" />
     <br />
     <br />
 
@@ -36,10 +36,7 @@ export default {
         password: this.pwd
       })
         .then(res => {
-          window.alert("ciao ~");
-          localStorage.setItem("token", res.data.token);
-          localStorage.setItem("userId", res.data.userId);
-          localStorage.setItem("role", res.data.role);
+          this.$store.commit(`login`, res.data)
           this.goToDashboard(res.data.role);
         })
         .catch(err => {
@@ -48,9 +45,9 @@ export default {
     },
     goToDashboard(role) {
       if (role === "student") {
-        window.location.href = '/student'
+        this.$router.push('/student')
       } else if (role === "teacher") {
-        window.location.href = '/teacher'
+        this.$router.push('/teacher')
       }
     }
   },
@@ -66,10 +63,19 @@ export default {
 .login {
   background: rgb(236, 236, 236);
   width: 500px;
-  margin: 0 auto;
   padding: 20px;
   border-radius: 10px;
   text-align: left;
+  position:absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+}
+h1{
+  margin-bottom: 20px;
+}
+p{
+  margin-bottom: 10px;
 }
 input {
   width: 100%;
@@ -82,5 +88,10 @@ input {
 button {
   width: 100%;
   line-height: 50px;
+  margin-top: 20px;
+}
+a{
+  margin-top: 10px;
+  display: inline-block;
 }
 </style>

@@ -156,6 +156,8 @@ export default {
 }
 .desc p {
   font-size: 20px;
+  max-height: 110px;
+  overflow: auto;
 }
 
 .desc .buttons {

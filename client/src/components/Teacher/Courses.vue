@@ -14,7 +14,6 @@
           @dblclick="openCourse(course._id)"
           @click="peekCourse(course._id)"
         >
-          <div class="pic"></div>
           <div class="info">
             <p class="title">{{course.name}}</p>
             <p class="teacher" v-for="(clss, indx) in course.class" :key="indx">
@@ -34,11 +33,23 @@
     ><div class="members">
       <div class="members-container">
         <h2>{{coursename}}</h2>
-        <h3>Students</h3>
+        <h3>Members</h3>
         <template v-if="users.length !== 0">
           <!-- Select a course to see the students -->
           <div class="member" v-for="(user, index) in users" :key="index">
-            <div class="m-pic"></div>
+            <div class="m-pic">
+                <template v-if="user.displaypic">
+                    <img :src="`http://localhost:8082/${user.displaypic}`"/>
+                </template>
+                <template v-else>
+                    <template v-if="user.role === 'teacher'">
+                        <img src="../../assets/teacher-def.png"/>
+                    </template>
+                    <template v-else>
+                        <img src="../../assets/student-def.png"/>
+                    </template>
+                </template>
+            </div>
             <p>{{user.name}}</p>
           </div>
         </template>
@@ -81,7 +92,10 @@ export default {
       this.courses = [];
       Api.get(this.uid)
         .then(user => {
-          this.courseIds = user.data.courses;
+          let courses = user.data.courses;
+          courses.forEach(crs =>{
+            this.courseIds.push(crs._id);
+          })
           this.initCourse(this.courseIds);
         })
         .catch(err => {
@@ -96,6 +110,7 @@ export default {
               this.courses.push(course);
             }
           });
+          console.log(this.courses);
         })
         .catch(err => {
           window.alert(err.response.data.msg ? err.response.data.msg : err);
@@ -194,18 +209,7 @@ input:focus {
   box-shadow: 0 8px 6px rgba(0, 0, 0, 0.171);
   transform: translateY(-5px);
 }
-.pic,
-.info {
-  display: inline-block;
-  vertical-align: middle;
-}
-.pic {
-  width: 80px;
-  height: 80px;
-  background: #eee;
-  border-radius: 100%;
-  margin-right: 30px;
-}
+
 .info .title {
   font-weight: bold;
   font-size: 28px;
@@ -253,12 +257,22 @@ input:focus {
   vertical-align: middle;
 }
 
-.m-pic {
-  width: 45px;
-  height: 45px;
-  border-radius: 100%;
-  background: #eee;
-  margin-right: 15px;
+.m-pic{
+    width: 45px;
+    height: 45px;
+    border-radius: 100%;
+    border: 1px solid #999;
+    margin-right: 15px;
+    position: relative;
+}
+.m-pic img{
+    width: 40px;
+    height: 40px;
+    border-radius: 100%;
+    position: absolute;
+    top:50%;
+    left:50%;
+    transform: translate(-50%, -50%);
 }
 
 .member p {

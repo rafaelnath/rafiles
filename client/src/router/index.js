@@ -97,39 +97,60 @@ export default new Router({
         {
           path: 'classes',
           name: 'Manage Classes',
-          component: () => import('@/components/Admin/Class/ManageClass')
+          component: () => import('@/components/Admin/Class/ManageClass'),
+          meta:{
+            adminLoginRequired: true
+          },
         },
         {
           path: 'classes/class/:id',
           name: 'Class',
-          component: () => import('@/components/Admin/Class/Class')
+          component: () => import('@/components/Admin/Class/Class'),
+          meta:{
+            adminLoginRequired: true
+          },
         },
         {
           path: 'classes/add-user/:cId/:cName',
           name: 'Add User',
-          component: () => import('@/components/Admin/Class/AddUser')
+          component: () => import('@/components/Admin/Class/AddUser'),
+          meta:{
+            adminLoginRequired: true
+          },
         },
         {
           path: 'classes/add-major',
           name: 'Add Major',
-          component: () => import('@/components/Admin/Class/AddMajor')
+          component: () => import('@/components/Admin/Class/AddMajor'),
+          meta:{
+            adminLoginRequired: true
+          },
         },
         {
           path: 'classes/add/:majorId/:majorName',
           name: 'Add Class',
-          component: () => import('@/components/Admin/Class/AddClass')
+          component: () => import('@/components/Admin/Class/AddClass'),
+          meta:{
+            adminLoginRequired: true
+          },
         },
 
         //--------------------------------------------- [COURSE]
         {
           path: 'courses/course/:id',
           name: 'Course',
-          component: () => import('@/components/Admin/Course/Course')
+          component: () => import('@/components/Admin/Course/Course'),
+          meta:{
+            adminLoginRequired: true
+          },
         },
         {
           path: 'courses/add-user/:cId/:cName',
           name: 'Course: Add User',
-          component: () => import('@/components/Admin/Course/AddUser')
+          component: () => import('@/components/Admin/Course/AddUser'),
+          meta:{
+            adminLoginRequired: true
+          },
         }
       ]
     },
@@ -143,27 +164,43 @@ export default new Router({
         {
           path: 'dashboard',
           name: 'Student Dashboard',
-          component: () => import('@/components/Dashboard/Dashboard')
+          component: () => import('@/components/Dashboard/Dashboard'),
+          meta:{
+            loginRequired: true
+          },
         },
         {
           path: 'class',
           name: 'Student Class',
-          component: () => import('@/components/Student/Class')
+          component: () => import('@/components/Student/Class'),
+          meta:{
+            loginRequired: true
+          },
         },
         {
           path: 'course',
           name: 'Student Course',
-          component: () => import('@/components/Teacher/Course')
+          component: () => import('@/components/Teacher/Course'),
+          meta:{
+            loginRequired: true
+          },
         },
         {
           path: 'bookviewer',
           name: 'Student Book Viewer',
-          component: () => import(`@/components/PDFViewer/PDFViewer`)
+          component: () => import(`@/components/PDFViewer/PDFViewer`),
+          // component: () => import(`@/components/PDFViewer/test`),
+          meta:{
+            loginRequired: true
+          },
         },
         {
           path: 'browse',
           name: 'Student Browse',
-          component: () => import('@/components/Teacher/Browse')
+          component: () => import('@/components/Teacher/Browse'),
+          meta:{
+            loginRequired: true
+          },
         },
       ]
     },
@@ -178,26 +215,49 @@ export default new Router({
           path: 'dashboard',
           name: 'Student Dashboard',
           component: () => import(`@/components/Dashboard/Dashboard`),
+          meta:{
+            loginRequired: true
+          },
+        },
+        {
+          path: 'class',
+          name: 'Teacher Class',
+          component: () => import('@/components/Student/Class'),
+          meta:{
+            loginRequired: true
+          },
         },
         {
           path: 'courses',
           name: 'Student Class',
-          component: () => import('@/components/Teacher/Courses')
+          component: () => import('@/components/Teacher/Courses'),
+          meta:{
+            loginRequired: true
+          },
         },
         {
           path: 'bookviewer',
           name: 'Book Viewer',
-          component: () => import(`@/components/PDFViewer/PDFViewer`)
+          component: () => import(`@/components/PDFViewer/PDFViewer`),
+          meta:{
+            loginRequired: true
+          },
         },
         {
           path: 'course',
           name: 'Student Course',
-          component: () => import('@/components/Teacher/Course')
+          component: () => import('@/components/Teacher/Course'),
+          meta:{
+            loginRequired: true
+          },
         },
         {
           path: 'browse',
           name: 'Student Browse',
-          component: () => import('@/components/Teacher/Browse')
+          component: () => import('@/components/Teacher/Browse'),
+          meta:{
+            loginRequired: true
+          },
         },
       ]
     },
@@ -205,7 +265,10 @@ export default new Router({
     {
       path: '/pdfviewer',
       name: 'PDFViewer',
-      component: () => import('@/components/PDFViewer/PDFViewer')
+      component: () => import('@/components/PDFViewer/PDFViewer'),
+      meta:{
+        loginRequired: true
+      },
     },
   ]
 })

@@ -97,6 +97,7 @@ export default {
     }
     .img-container p{
         font-size: 14px;
+        color:#fff;
         text-align: center;
         position: absolute;
         top:50%;

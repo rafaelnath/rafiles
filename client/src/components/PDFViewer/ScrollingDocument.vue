@@ -28,11 +28,6 @@ export default {
         ScrollingPage,
     },
 
-    directives:{
-        visible,
-        scroll,
-    },
-
     props:{
         pages: {
             required: true,
@@ -60,6 +55,12 @@ export default {
             return this.pages.length;
         },
     },
+    
+    directives:{
+        visible,
+        scroll,
+    },
+
 
     methods:{
         fetchPages(currentPage){
@@ -67,7 +68,9 @@ export default {
         },
 
         onPageJump(scrollTop){
-            this.$emit('page-jump', scrollTop);
+            this.$emit('page-jump');
+            this.$el.scrollTop = scrollTop;
+            console.log(this.$el.scrollTop);
         },
 
         updateScrollBounds(){

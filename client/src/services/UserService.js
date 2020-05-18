@@ -16,6 +16,9 @@ export default{
     get(params){
         return Api().get(`users/findOne?id=${params}`)
     },
+    getClass(params){
+        return Api().get(`users/userclass?id=${params}`)
+    },
     update(params){
         return Api().put('users', params);
     },
@@ -38,5 +41,14 @@ export default{
 
     adminLogin(params){
         return Api().post(`users/adminlogin`, params);
-    }
+    },
+
+    removeCourse(params){
+        return Api().put(`users/removeCourse`, params);
+    },
+    
+    removeClass(params){
+        return Api().put(`users/removeClass`, params);
+    },
+
 }

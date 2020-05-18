@@ -61,10 +61,7 @@ export default {
       this.menu = page;
     },
     logout(){
-      localStorage.removeItem('token');
-      localStorage.removeItem('role');
-      localStorage.removeItem('userId');
-      window.alert('see ya...');
+      this.$store.commit('logout');
       this.$router.push('/login');
     }
   }

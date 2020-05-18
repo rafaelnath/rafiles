@@ -4,29 +4,31 @@
       <span @click="goTo('dashboard')">dashboard</span>
     </p>
     <h2>Manage Books</h2>
-    <input type="text" placeholder="search books..." @input="searchBook" v-model="search" />
+    <input type="text" placeholder="search book title or author..." @input="searchBook" v-model="search" />
     <a class="menu" @click="goTo('books/upload')">upload book</a>
-    <table>
-      <tr>
-        <th>Title</th>
-        <th>Author</th>
-        <th>Size</th>
-        <th>Upload date</th>
-        <th>Action</th>
-      </tr>
-      <tr v-for="(book, index) in books" :key="index">
-        <td>{{book.title}}</td>
-        <td>{{book.author}}</td>
-        <td>{{Math.round(book.size / 1000)}} kb</td>
-        <td>{{book.created_at}}</td>
-        <td>
-          <router-link :to="'/admin/books/edit/' + book._id">
-            <a>edit</a>
-          </router-link>&nbsp;&nbsp;
-          <a @click="deleteBook(book._id, book.filename)">delete</a>
-        </td>
-      </tr>
-    </table>
+    <div class="table-container">
+      <table>
+        <tr>
+          <th>Title</th>
+          <th>Author</th>
+          <th>Size</th>
+          <th>Upload date</th>
+          <th>Action</th>
+        </tr>
+        <tr v-for="(book, index) in books" :key="index">
+          <td>{{book.title}}</td>
+          <td>{{book.author}}</td>
+          <td>{{Math.round(book.size / 1000)}} kb</td>
+          <td>{{book.created_at.split('T')[0]}}</td>
+          <td>
+            <router-link :to="'/admin/books/edit/' + book._id">
+              <a>edit</a>
+            </router-link>&nbsp;&nbsp;
+            <a @click="deleteBook(book._id, book.filename)">delete</a>
+          </td>
+        </tr>
+      </table>
+    </div>
   </div>
 </template>
 
@@ -142,11 +144,17 @@ input:focus {
   text-decoration: underline;
 }
 
+.table-container{
+  height: 430px;
+  overflow: auto;
+}
+  
 table {
   width: 100%;
   line-height: 30px;
 }
 th{
+  padding-bottom: 10px;
   text-align: left;
 }
 span {
@@ -156,6 +164,9 @@ span:hover {
   letter-spacing: 2px;
   font-weight: bolder;
   cursor: pointer;
+}
+td{
+  padding-bottom: 5px;
 }
 td a {
   text-decoration: none;

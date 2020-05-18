@@ -1,6 +1,6 @@
 <template>
   <div class="upload-book">
-    <p><span @click="goTo('dashboard')">dashboard</span> / <span @click="goTo('books')">manage book</span></p>
+    <p id="nav"><span @click="goTo('dashboard')">dashboard</span> / <span @click="goTo('books')">manage book</span></p>
     
     <form @submit.prevent="upload" enctype="multipart/form-data">
       <h1>Upload Book</h1>
@@ -46,8 +46,8 @@ export default {
   },
 
   methods: {
-    goTo(page) {
-      window.location.href = `/admin/${page}`;
+    goTo(page){
+        this.$router.push(`/admin/${page}`)
     },
     downloadFile() {
       window.open("http://localhost:8082/download");
@@ -98,7 +98,6 @@ export default {
     },
     addbook(title, author, desc, size, name) {
       Api.addbook({
-        courseId: "5e8ad0f56ea7af44b4ff757c",
         title: title,
         author: author,
         description: desc,
@@ -108,6 +107,7 @@ export default {
         .then(res => {
           this.file = "";
           window.alert("book added!");
+          this.goTo(`books`);
         })
         .catch(err => {
           console.log(err.response);
@@ -121,10 +121,16 @@ export default {
 <style scoped>
 .upload-book {
   background: #f1f1f1;
-  width: 70%;
-  margin: 0 auto;
+  width: calc(75% - 40px);
   padding: 20px;
+  margin: 0 auto;
   border-radius: 20px;
+}
+#nav{
+  margin-bottom: 10px;
+}
+h1{
+  margin-bottom: 20px;
 }
 input[type="text"] {
   margin-bottom: 20px;
@@ -151,7 +157,7 @@ span {
   transition: 0.1s ease-in;
 }
 span:hover {
-  font-size: 18px;
+  letter-spacing: 2px;
   font-weight: bolder;
   cursor: pointer;
 }

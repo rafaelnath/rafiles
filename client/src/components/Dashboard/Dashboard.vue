@@ -3,7 +3,18 @@
     <div class="userbar">
       <div class="picture" :class="{hide: showEdit}">
         <template v-if="!showEdit">
-          <img :src="dp"/>
+          <template v-if="dp">
+            <img :src="dp"/>
+          </template>
+          <template v-else>
+            <template v-if="user.role === `teacher`">
+              <img src="../../assets/teacher-def.png"/>
+            </template>
+            <template v-else>
+              <img src="../../assets/student-def.png"/>
+            </template>
+          </template>
+
           <div class="overlay" @click="show = !show">
               <p>Change Picture</p>
           </div>
@@ -82,13 +93,20 @@
         <p :class="{bright: tab === 'nt'}" @click="tab = 'nt'">Notes</p>
         <div class="bg nt" :class="{active: tab === 'nt', next: tab === 'cr'}"/>
       </div>
-      <div class="tab">
+      <div class="tab" v-if="user.role === 'student'">
         <p :class="{bright: tab === 'cr'}" @click="tab = 'cr'">Courses</p>
         <div class="bg cr" :class="{active: tab === 'cr', cr2: tab === 'bp'}"/>
       </div>
+      <div class="tab" v-else>
+        <p :class="{bright: tab === 'cr'}" @click="tab = 'cr'">Classes</p>
+        <div class="bg cr" :class="{active: tab === 'cr', cr2: tab === 'bp'}"/>
+      </div>
+      
       <div style="width:100%;height:20px;"/>
       <Backpack :books="user.backpack" :uId="uId" v-if="tab === 'bp'"/>
       <Notes :uId="uId" v-if="tab === 'nt'"/>
+      <Courses :uId="uId" :courses="user.courses" v-if="tab === 'cr' && user.role === 'student'"/>
+      <Classes :uId="uId" :classes="user.class" v-if="tab === 'cr' && user.role === 'teacher'"/>
     </template>
   </div>
 </template>
@@ -96,6 +114,8 @@
 <script>
 import Backpack from "./Backpack";
 import Notes from "./Notes";
+import Courses from "./Courses";
+import Classes from "./Classes";
 import EditUser from "./EditUser";
 import ImageCrop from "vue-image-crop-upload";
 import Api from "@/services/UserService";
@@ -116,6 +136,8 @@ export default {
     ImageCrop,
     EditUser,
     Notes,
+    Courses,
+    Classes,
   },
 
   created() {
@@ -127,7 +149,11 @@ export default {
     initData() {
       Api.get(this.uId).then(user => {
         this.user = user.data;
-        this.dp = `http://localhost:8082/${this.user.displaypic}`;
+        if(this.user.displaypic){
+          this.dp = `http://localhost:8082/${this.user.displaypic}`;
+        }
+
+        console.log(this.user)
       });
     },
     srcFileSet(fname, ftype, fsize){

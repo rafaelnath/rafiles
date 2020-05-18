@@ -67,7 +67,8 @@ module.exports = {
     },
     findByClass(req, res) {
         Course.find({ class: req.query.cId })
-            .populate('users', 'name role')
+            .populate('users', 'name role displaypic')
+            .populate('books', 'title')
             .then(result => {
                 res.status(200).json(result)
             })
@@ -88,8 +89,8 @@ module.exports = {
                 }
             })
             .populate('books', 'title author description')
-            .populate('requests', 'name role')
-            .populate('users', 'name role')
+            .populate('requests', 'name role displaypic')
+            .populate('users', 'name role displaypic')
             .then(result => {
                 res.status(200).json(result)
             })
@@ -195,7 +196,22 @@ module.exports = {
         Course.findOne({ books: req.body.bookId })
             .then(course => {
                 if (course) {
-                    throw new Error(`Book's already exists.`)
+                    if (course._id === req.body.courseId) {
+                        throw new Error(`This course already have this book`)
+                    } else{
+                        Course.findByIdAndUpdate(req.body.courseId, { $push: { books: req.body.bookId } })
+                            .then(course => {
+                                res.status(200).json({
+                                    msg: 'book added',
+                                    data: course
+                                })
+                            })
+                            .catch(err => {
+                                res.status(400).json({
+                                    msg: err.message
+                                });
+                            })
+                    }
                 } else {
                     Course.findByIdAndUpdate(req.body.courseId, { $push: { books: req.body.bookId } })
                         .then(course => {
@@ -281,8 +297,8 @@ module.exports = {
         Course.findByIdAndDelete(req.query.id)
             .then(deletedCourse => {
                 if (deletedCourse.users.length !== 0 && deletedCourse.class.length !== 0) {
-                    let p1 = User.updateMany({ _id: deletedCourse.users }, { $pull: { courses: req.body.courseId } });
-                    let p2 = Class.updateMany({ _id: deletedCourse.class }, { $pull: { courses: req.body.courseId } });
+                    let p1 = User.updateMany({ _id: deletedCourse.users }, { $pull: { courses: req.query.id   } });
+                    let p2 = Class.updateMany({ _id: deletedCourse.class }, { $pull: { courses: req.query.id  } });
 
                     Promise.all([p1, p2])
                         .then(result => {
@@ -300,7 +316,7 @@ module.exports = {
                 } else if (deletedCourse.users.length !== 0 && deletedCourse.class.length === 0) {
                     let userId = deletedCourse.users;
 
-                    User.updateMany({ _id: userId }, { $pull: { courses: req.body.courseId } })
+                    User.updateMany({ _id: userId }, { $pull: { courses: req.query.id } })
                         .then(() => {
                             res.status(200).json({
                                 msg: 'course deleted',
@@ -314,7 +330,7 @@ module.exports = {
                 } else if (deletedCourse.users.length === 0 && deletedCourse.class.length !== 0) {
                     let classId = deletedCourse.class;
 
-                    Class.updateMany({ _id: classId }, { $pull: { courses: req.body.courseId } })
+                    Class.updateMany({ _id: classId }, { $pull: { courses:req.query.id } })
                         .then(() => {
                             res.status(200).json({
                                 msg: 'course deleted',

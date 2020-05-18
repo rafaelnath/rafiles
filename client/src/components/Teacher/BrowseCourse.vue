@@ -4,7 +4,6 @@
       <input type="text" placeholder="Search course..." @input="searchCourse" v-model="search" />
       <div class="list">
         <div class="course" v-for="(course, index) in courses" :key="index" @click="seeInfo(course._id)">
-          <div class="pic"></div>
           <div class="info">
             <p class="title">{{course.name}}</p>
             <p class="class" v-for="(clss, indx) in course.class" :key="indx">
@@ -29,14 +28,28 @@
               <div class="teachers" v-if="teachers.length !== 0">
                   <h3>Teacher</h3>
                   <div class="member" v-for="(tch, index) in teachers" :key="index">
-                      <div class="m-pic"></div>
+                      <div class="m-pic">
+                          <template v-if="tch.displaypic">
+                            <img :src="`http://localhost:8082/${tch.displaypic}`"/>
+                          </template>
+                          <template v-else>
+                            <img src="../../assets/teacher-def.png"/>
+                          </template>
+                      </div>
                       <p>{{tch.name}}</p>
                   </div>
               </div>
               <div class="students" v-if="students.length !== 0"  >
                   <h3>Students</h3>
                   <div class="member" v-for="(std, index) in students" :key="index">
-                      <div class="m-pic"></div>
+                      <div class="m-pic">
+                          <template v-if="std.displaypic">
+                            <img :src="`http://localhost:8082/${std.displaypic}`"/>
+                          </template>
+                          <template v-else>
+                            <img src="../../assets/student-def.png"/>
+                          </template>
+                      </div>
                       <p>{{std.name}}</p>
                   </div>
               </div>
@@ -44,7 +57,7 @@
             </div>
 
             <template v-if="course.length !== 0">
-                <p @click="join(course._id)" v-if="!requested && !joined" class="join">Join</p>
+                <p @click="join(course._id, course.class)" v-if="!requested && !joined" class="join">Join</p>
                 <p v-else-if="requested" class="join requested">Requested</p>
                 <p v-else-if="joined" class="join requested">Joined</p>
             </template>
@@ -55,6 +68,7 @@
 
 <script>
 import Api from "@/services/ClassService";
+import UserApi from "@/services/UserService";
 import CourseApi from "@/services/CourseService";
 export default {
   data() {
@@ -78,8 +92,34 @@ export default {
         this.requested = false;
         this.joined = false;
       Api.allCourse().then(res => {
-        this.courses = res.data;
-      });
+        // this.courses = res.data;
+        let courses = res.data;
+
+        UserApi.getClass(localStorage.getItem(`userId`))
+        .then(usr =>{
+          let uclass = usr.data;
+          let isExist = false;
+
+          courses.forEach(crs =>{
+            crs.class.forEach(cls =>{
+              if(uclass.includes(cls._id)){
+                isExist = true;
+              } else{
+                isExist = false;
+              }
+            })
+            if(!isExist){
+              this.courses.push(crs);
+            }
+          })
+        }).catch(err =>{
+          window.alert(`Something went wrong. Try again later :(`);
+          console.log(err.response.data ? err.response.data : err);
+        })
+      }).catch(err =>{
+        window.alert(`Can't retrieve courses, try again later :(`);
+        console.log(err.response.data ? err.response.data.msg : err);
+      })
     },
     searchCourse() {
       clearTimeout(this.debounce);
@@ -128,17 +168,18 @@ export default {
             })
     },
 
-    join(cId){
-        CourseApi.joinCourse({
-            courseId: cId,
-            userId: this.uid
-        })
-        .then(res =>{
-            this.seeInfo(cId);
-        })
-        .catch(err=>{
-            window.alert(err.response.data.msg);
-        })
+    join(cId, classes){
+      CourseApi.joinCourse({
+          courseId: cId,
+          userId: this.uid
+      })
+      .then(res =>{
+          this.seeInfo(cId);
+      })
+      .catch(err =>{
+        window.alert(`Something went wrong. Try again later :(`);
+        console.log(err.response.data ? err.response.data : err);
+      })
     }
   },
 
@@ -197,18 +238,6 @@ input:focus {
   cursor: pointer;
   box-shadow: 0 8px 6px rgba(0, 0, 0, 0.171);
   transform: translateY(-5px);
-}
-.pic,
-.info {
-  display: inline-block;
-  vertical-align: middle;
-}
-.pic {
-  width: 80px;
-  height: 80px;
-  background: #eee;
-  border-radius: 100%;
-  margin-right: 30px;
 }
 .info .title {
   font-weight: bold;
@@ -294,11 +323,21 @@ input:focus {
 }
 
 .m-pic{
-    width: 50px;
-    height: 50px;
+    width: 45px;
+    height: 45px;
     border-radius: 100%;
-    background: #eee;
+    border: 1px solid #999;
     margin-right: 15px;
+    position: relative;
+}
+.m-pic img{
+    width: 40px;
+    height: 40px;
+    border-radius: 100%;
+    position: absolute;
+    top:50%;
+    left:50%;
+    transform: translate(-50%, -50%);
 }
 
 .member{

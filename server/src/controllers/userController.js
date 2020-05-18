@@ -19,16 +19,29 @@ module.exports = {
                     nationality: req.body.nationality,
                     gender: req.body.gender,
                     birthdate: req.body.birthdate,
-                    displaypic: `displaypics/${time}_${req.body.name}.png`,
+                    // displaypic: `displaypics/${time}_${req.body.name}.png`,
                     // birthdate: req.body.birthdate,
                 })
                     .then(user => {
-                        fs.writeFile(`./uploads/displaypics/${time}_${req.body.name}.png`, req.body.upic, { encoding: 'base64' }, (err) => {
-                            console.log(`file created`);
-                        });
-                        res.status(201).json(user);
+                        if (req.body.upic) {
+                            fs.writeFile(`./uploads/displaypics/${time}_${req.body.name}.png`, req.body.upic, { encoding: 'base64' }, (err) => {
+                                console.log(`file created`);
+                                if(err){
+                                    res.status(500).json(err);
+                                } else{
+                                    User.findByIdAndUpdate(user._id, { displaypic: `displaypics/${time}_${req.body.name}.png` })
+                                        .then(usr => {
+                                            res.status(201).json(usr);
+                                        }).catch(err => {
+                                            res.status(400).json({ msg: err.message });
+                                        });
+                                }
+                            });
+                        } else {
+                            res.status(201).json(user);
+                        }
                     }).catch(err => {
-                        res.status(404).json({ msg: err.message });
+                        res.status(400).json({ msg: err.message });
                     });
             }
         }).catch(err => {
@@ -36,14 +49,14 @@ module.exports = {
         })
     },
 
-    adminlogin(req, res){
-        if(req.body.uname !== process.env.ADMIN_UNAME){
-            res.status(400).json({msg:`Incorrect username.`})
-        } else if(req.body.pwd !== process.env.ADMIN_PASSWORD){
-            res.status(400).json({msg: `Incorrect password.`})
-        } else{
-            let token = jwt.sign({uname: process.env.ADMIN_UNAME, pwd: process.env.ADMIN_PASSWORD}, process.env.ADMIN_SECRET_KEY);
-            res.status(200).json({token})
+    adminlogin(req, res) {
+        if (req.body.uname !== process.env.ADMIN_UNAME) {
+            res.status(400).json({ msg: `Incorrect username.` })
+        } else if (req.body.pwd !== process.env.ADMIN_PASSWORD) {
+            res.status(400).json({ msg: `Incorrect password.` })
+        } else {
+            let token = jwt.sign({ uname: process.env.ADMIN_UNAME, pwd: process.env.ADMIN_PASSWORD }, process.env.ADMIN_SECRET_KEY);
+            res.status(200).json({ token })
         }
     },
 
@@ -84,6 +97,12 @@ module.exports = {
         User.findById(req.query.id)
             // .populate('course', 'name ')
             .populate('class')
+            .populate({
+                path: 'courses',
+                populate: {
+                    path: 'class'
+                }
+            })
             .populate('backpack')
             .then(user => {
                 res.status(200).json(user)
@@ -103,6 +122,15 @@ module.exports = {
             })
             .catch(err => {
                 res.status(400).json(err)
+            })
+    },
+    getClass(req, res){
+        User.findById(req.query.id)
+            .then(user =>{
+                res.status(200).json(user.class)
+            })
+            .catch(err =>{
+                res.status(400).json(err);
             })
     },
     update(req, res) {

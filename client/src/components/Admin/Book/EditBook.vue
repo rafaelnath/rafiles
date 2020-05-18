@@ -1,6 +1,6 @@
 <template>
   <div class="edit-book">
-    <p>
+    <p id="nav">
       <span @click="goTo('dashboard')">dashboard</span> /
       <span @click="goTo('books')">manage book</span>
     </p>
@@ -23,17 +23,6 @@
       <p>File name</p>
       <p class="info">{{book.filename}}</p>
       <br />
-
-      <!-- <p>Courses</p>
-      <template v-if="book.courses.length > 0">
-        <ul>
-          <li v-for="(course, index) in book.courses" :key="index">course.name</li>
-        </ul>
-      </template>
-
-      <template v-else>
-        <p style="fontStyle:italic">none.</p>
-      </template> -->
       <br />
 
       <button>UPDATE</button>
@@ -54,8 +43,8 @@ export default {
   },
 
   methods: {
-    goTo(page) {
-      window.location.href = `/admin/${page}`;
+    goTo(page){
+        this.$router.push(`/admin/${page}`)
     },
     selectFile() {
       //why files[0], because the input field always store the file to the collection called files
@@ -152,10 +141,16 @@ export default {
 <style scoped>
 .edit-book {
   background: #f1f1f1;
-  width: 70%;
-  margin: 0 auto;
+  width: calc(75% - 40px);
   padding: 20px;
+  margin: 0 auto;
   border-radius: 20px;
+}
+#nav{
+  margin-bottom: 10px;
+}
+h2{
+  margin-bottom: 20px;
 }
 input {
   margin-bottom: 20px;
@@ -182,7 +177,7 @@ span {
   transition: 0.1s ease-in;
 }
 span:hover {
-  font-size: 18px;
+  letter-spacing: 2px;
   font-weight: bolder;
   cursor: pointer;
 }

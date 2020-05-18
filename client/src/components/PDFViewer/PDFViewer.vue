@@ -15,6 +15,7 @@
             :url="url"
             @page-count="updatePageCount"
             @page-focus="updateCurrentPage"
+            @page-jump="initNote"
             >
             <template v-slot:document="{pages}">
             <PDFDocument
@@ -30,8 +31,8 @@
                   <label>Side Note - Page {{this.currentPage}}</label>
               </div>
               <div class="right" v-if="note._id">
-                  <div class="button copy" @click="copy"></div>
-                  <div class="button menu" @click="showmenu = !showmenu"></div>
+                  <div class="button copy" @click="copy"><img src="../../assets/copy-01.png"/></div>
+                  <div class="button menu" @click="showmenu = !showmenu"><img src="../../assets/menu.png"/></div>
               </div>
               <div style="clear: both"/>
               <note-menu v-if="showmenu" :totalpage="pageCount" :nid="note._id" :npage="note.page" :cpage="currentPage"/>
@@ -41,8 +42,12 @@
               <textarea cols="30" rows="10" placeholder="Type something" v-model="note.content" @input="checkChanges"></textarea>
           </div>
           <div class="foot" v-if="isChanged">
-              <div class="button save" @click="saveNote"></div>
-              <div class="button cancel" @click="cancel"></div>
+              <div class="button save" @click="saveNote">
+                  <img src="../../assets/checklist-01.png"/>
+              </div>
+              <div class="button cancel" @click="cancel">
+                  <img src="../../assets/close-01.png"/>
+              </div>
           </div>
       </div>
   </div>
@@ -50,8 +55,6 @@
 
 <script>
 import Headbar from './Headbar';
-import PDFZoom from './PDFZoom';
-import PDFPaginator from './PDFPaginator';
 
 import PDFData from './PDFData';
 import PDFDocument from './PDFDocument';
@@ -70,8 +73,6 @@ export default {
     name: 'PDFViewer',
 
     components: {
-        PDFZoom,
-        PDFPaginator,
         PDFData,
         PDFDocument,
         Headbar,
@@ -97,6 +98,10 @@ export default {
     },
 
     methods:{
+        initBook(){
+            this.url = `http://localhost:8082/book/download?id=${this.$route.query.bId}`
+        },
+        
         updateScale({scale, isOptimal = false}){
             const roundedScale = floor(scale, 2);
             if (isOptimal) this.optimalScale = roundedScale;
@@ -113,12 +118,10 @@ export default {
 
         updateCurrentPage(pageNumber){
             this.currentPage = pageNumber;
+            console.log(`curr page updated`);
             this.initNote();
         },
 
-        initBook(){
-            this.url = `http://localhost:8082/book/download?id=${this.$route.query.bId}`
-        },
         toggleNote(){
             this.openNote = !this.openNote;
             this.updateFit('width');
@@ -282,8 +285,11 @@ export default {
         width: 20px;
         height: 20px;
     }
-    .button{
-        background:grey;
+    .button:hover{
+        cursor: pointer;
+    }
+    .button img{
+        width: 100%;
     }
     input{
         margin-bottom: 30px;

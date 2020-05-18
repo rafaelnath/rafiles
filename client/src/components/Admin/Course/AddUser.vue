@@ -1,9 +1,7 @@
 <template>
   <div class="add-major">
-    <p>
-      <span @click="goTo('dashboard')">dashboard</span> /
-      <span @click="goTo('classes')">manage classes</span> /
-      <span @click="goTo(`courses/course/${courseId}`)">{{this.$route.params.cName}}</span>
+    <p id="nav">
+      <span @click="goTo(`courses/course/${courseId}`)">back</span>
     </p>
 
     <h1>Add User</h1>
@@ -16,11 +14,11 @@
 
     <table>
       <tr>
-        <td>Full name</td>
-        <td>Email address</td>
-        <td>Role</td>
-        <td>Register date</td>
-        <td>Action</td>
+        <th>Full name</th>
+        <th>Email address</th>
+        <th>Role</th>
+        <th>Register date</th>
+        <th>Action</th>
       </tr>
       <tr v-for="(user, index) in users" :key="index">
         <td>{{user.name}}</td>
@@ -61,8 +59,8 @@ export default {
   },
 
   methods: {
-    goTo(page) {
-      window.location.href = `/admin/${page}`;
+    goTo(page){
+        this.$router.push(`/admin/${page}`)
     },
 
     initData() {
@@ -117,10 +115,16 @@ export default {
 <style scoped>
 .add-major {
   background: #f1f1f1;
-  width: 70%;
+  width: calc(75% - 40px);
   margin: 0 auto;
   padding: 20px;
   border-radius: 20px;
+}
+#nav{
+  margin-bottom: 10px;
+}
+h1{
+  margin-bottom: 20px;
 }
 input[type="text"] {
   margin-bottom: 20px;
@@ -143,11 +147,14 @@ table {
   width: 100%;
   line-height: 38px;
 }
+th{
+  text-align: left;
+}
 span {
   transition: 0.1s ease-in;
 }
 span:hover {
-  font-size: 18px;
+  letter-spacing: 2px;
   font-weight: bolder;
   cursor: pointer;
 }

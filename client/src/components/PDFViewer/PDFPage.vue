@@ -1,5 +1,5 @@
 <template>
-    <canvas v-visible.once="drawPage" v-bind="canvasAttrs"></canvas>
+    <canvas v-visible="drawPage" v-bind="canvasAttrs"></canvas>
 </template>
 
 <script>
@@ -114,7 +114,7 @@ export default {
     created(){
         this.viewport = this.page.getViewport(this.optimalScale);
     },
-
+        
     beforeDestroy(){
         this.destroyPage(this.page);
     },

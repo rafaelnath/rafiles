@@ -273,7 +273,7 @@ module.exports = {
             })
     },
     delete(req, res) {
-        Class.findByIdAndDelete(req.body.classId)
+        Class.findByIdAndDelete(req.query.id)
             .then(deletedClass => {
                 if (deletedClass.users.length === 0) {
                     res.status(200).json({
@@ -283,7 +283,7 @@ module.exports = {
                 } else {
                     let userId = deletedClass.users;
 
-                    User.updateMany({ _id: userId }, { class: null })
+                    User.updateMany({ _id: userId }, { $pull:{class: req.query.id} })
                         .then(user => {
                             res.status(200).json({
                                 msg: 'class deleted successfully',

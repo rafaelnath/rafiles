@@ -20,9 +20,9 @@
       </div>
     </div>
     <!-- -----------------------------------[FEATURES SECTION] -->
-    <div class="features">
+    <!-- <div class="features">
       <div class="container">
-        <!-- main features with icon -->
+        main features with icon
         <h1>Features</h1>
             <ul>
               <li>Awesome Todos</li>
@@ -30,7 +30,7 @@
               <li>Modern Classroom</li>
             </ul>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 

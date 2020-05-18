@@ -1,30 +1,36 @@
 <template>
   <div class="notes">
-    <div class="list" v-for="(note, index) in notes" :key="index">
-      <div class="left">
-        <p class="btitle">{{note.btitle}}</p>
-      </div>
-      <div class="right">
-        <div class="notelist" v-for="(list, indx) in note.notes" :key="indx" @click="open(note.bid, list.page[0])">
-          <div class="list-container">
-            <div class="l-left">
-              <p class="title">{{list.title}}</p>
-            </div
-            ><div class="l-right">
-                <p class="pages">
-                page:&nbsp;
-                <span v-for="(pg, i) in list.page" :key="i">
-                    {{list.page.length > 1 ?
-                    i === (list.page.length - 1) ?
-                    pg : `${pg}, ` : pg}}
-                </span>
-                </p>
+    <template v-if="notes.length > 0">
+      <div class="list" v-for="(note, index) in notes" :key="index">
+        <div class="left">
+          <p class="btitle">{{note.btitle}}</p>
+        </div>
+        <div class="right">
+          <div class="notelist" v-for="(list, indx) in note.notes" :key="indx" @click="open(note.bid, list.page[0])">
+            <div class="list-container">
+              <div class="l-left">
+                <p class="title">{{list.title}}</p>
+              </div
+              ><div class="l-right">
+                  <p class="pages">
+                  page:&nbsp;
+                  <span v-for="(pg, i) in list.page" :key="i">
+                      {{list.page.length > 1 ?
+                      i === (list.page.length - 1) ?
+                      pg : `${pg}, ` : pg}}
+                  </span>
+                  </p>
+              </div>
             </div>
           </div>
         </div>
+        <div style="clear:both" />
       </div>
-      <div style="clear:both" />
-    </div>
+    </template>
+    <template v-else>
+      <p class="none">You haven't made any notes yet.</p>
+    </template>
+
   </div>
 </template>
 
@@ -101,7 +107,17 @@ export default {
   padding: 20px;
   height: 360px;
   overflow: auto;
+  position: relative;
 }
+
+.none{
+  position: absolute;
+  top:50%;
+  left:50%;
+  transform: translate(-50%, -50%);
+  font-size: 22px;
+}
+
 .list {
   margin-bottom: 30px;
 }

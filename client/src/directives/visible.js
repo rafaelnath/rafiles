@@ -5,14 +5,9 @@ const instances = new WeakMap();
 function createObserver (el, vnode, modifiers, callback){
     const observer = new IntersectionObserver(entries => {
         const entry = entries[0];
-        // console.log(modifiers.once);
         if(entry.isIntersecting){
             callback();
         } 
-        
-        // if (modifiers.once){
-        //     disconnectObserver(observer, el);
-        // }
     })
 
     vnode.context.$nextTick(() => observer.observe(el)); // observe after element is inserted in DOM
@@ -27,7 +22,7 @@ function disconnectObserver(observer, el){ //self explanatory i guess
 
 function bind(el, {value, modifiers}, vnode){ //call createObserver, and assign it to the weakmap
     if(typeof window.IntersectionObserver === 'undefined') { 
-        console.log('IntersectionObserver API is not available in your browser :(');
+        console.log(`your browser doesn't have intersetion observer API :(`);
     } else {
         const observer = createObserver(el, vnode, modifiers, ()=>{
             const callback = value;

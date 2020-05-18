@@ -1,8 +1,10 @@
 <template>
   <div class="new-course">
     <p>Course Name</p>
-    <input type="text" v-model="name" placeholder="Enter course name" />
-    <button @click="createCourse">Create</button>
+    <input type="text" v-model="name" placeholder="Enter course name" @keyup.enter="createCourse"/>
+    <div class="button">
+      <button @click="createCourse">Create</button>
+    </div>
   </div>
 </template>
 
@@ -17,6 +19,10 @@ export default {
   },
   methods: {
     createCourse() {
+      if(!this.name){
+        window.alert(`please input the course name`);
+        return;
+      }
       Api.createCourse({
         name: this.name,
         classId: this.$route.params.id
@@ -37,7 +43,19 @@ export default {
 .new-course {
   background: #fff;
   padding: 10px;
-  border-radius: 20px;
-  margin-top: 10px;
+  border-radius: 10px;
+  margin-top: 20px;
+  display: inline-block;
+}
+input, .button{
+  display: inline-block;
+}
+.container{
+  margin-right: 20px;
+}
+p{
+  margin-bottom: 5px;
+  font-weight: bold;
+  font-size: 18px;
 }
 </style>

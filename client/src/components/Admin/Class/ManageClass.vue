@@ -6,15 +6,23 @@
     <h2>Manage Classes</h2>
     <input type="text" placeholder="search majors..." @input="searchMajor" v-model="search" />
     <a class="menu" @click="goTo('classes/add-major')">add major</a>
+    <a class="menu" @click="delmode = !delmode" :class="{active: delmode}">delete mode</a>
 
     <div class="class-container">
       <div class="class" v-for="(major, index) in majors" :key="index">
         <div class="left">
           <p class="major-name">{{major.name}}</p>
-          <p class="addclass" @click="goTo(`classes/add/${major._id}/${major.name}`)">add class</p>
+          <p class="addclass" @click="goTo(`classes/add/${major._id}/${major.name}`)" v-if="!delmode">add class</p>
+          <p class="addclass" :class="{del: delmode}" @click="deleteMajor(major._id, major.name)" v-else>delete</p>
         </div>
         <div class="right">
-          <p @click="goTo(`classes/class/${value._id}`)" class="classes" v-for="(value, index) in major.classes" :key="index">{{value.name}}</p>
+          <template v-if="!delmode">
+            <p @click="goTo(`classes/class/${value._id}`)" class="classes" v-for="(value, index) in major.classes" :key="index">{{value.name}}</p>
+          </template>
+          <template v-else>
+            <p class="classes" :class="{del: delmode}" v-for="(value, index) in major.classes" :key="index" @click="deleteClass(value._id, value.name)">{{value.name}} x</p>
+          </template>
+
         </div>
       </div>
     </div>
@@ -28,7 +36,8 @@ export default {
     return {
       majors: null,
       classes: null,
-      search: ""
+      search: "",
+      delmode: false,
     };
   },
 
@@ -50,6 +59,28 @@ export default {
           this.majors = res.data.data;
         });
       }, 600);
+    },
+    deleteMajor(id, name){
+      if(window.confirm(`permanently delete '${name}' from the system? \nThis action can't be undone`)){
+        Api.deleteMajor(id).then(()=>{
+          window.alert(`major deleted`);
+          this.initData();
+        }).catch(err =>{
+          window.alert(`Something went wrong, please try again later :(`);
+          console.log(err.response.data ? err.response.data.msg : err);
+        })
+      }
+    },
+    deleteClass(id, name){
+      if(window.confirm(`permanently delete '${name}' from the major? \nThis action can't be undone`)){
+        Api.deleteClass(id).then(()=>{
+          window.alert(`class deleted`);
+          this.initData();
+        }).catch(err =>{
+          window.alert(`Something went wrong, please try again later :(`);
+          console.log(err.response.data ? err.response.data.msg : err);
+        })
+      }
     }
   },
 
@@ -91,6 +122,20 @@ input:focus {
   opacity: 1;
   padding: 5px;
 }
+
+.del{
+  color: rgb(204, 0, 0);
+}
+
+.active{
+  font-weight: bold;
+  color: rgb(204, 0, 0);
+}
+
+.right .del:hover{
+  background:rgb(255, 203, 203)!important;
+}
+
 
 .menu {
   margin-left: 20px;

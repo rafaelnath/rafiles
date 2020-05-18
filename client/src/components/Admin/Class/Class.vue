@@ -28,12 +28,18 @@
             <!-- <div class="teacher" v-if="course.users.length !== 0"> -->
             <div class="teacher">
               <p>Teacher:</p>
-              <p v-if="course.users.length !== 0">{{course.users}}</p>
+              <template v-if="course.users.length !== 0">
+                <p v-for="(user, indx) in course.users" :key="indx">
+                  <span v-if="user.role === 'teacher'">
+                    {{user.name}},&nbsp;
+                  </span>
+                </p>
+              </template>
               <p v-else>none</p>
             </div>
           </div>
           <div class="cRight">
-            <p @click="removeCourse(course._id, course.name)">remove</p>
+            <p @click="confirmRemove(course._id, course.name)">remove</p>
           </div>
         </div>
       </div>
@@ -91,6 +97,7 @@
 
 <script>
 import Api from "@/services/ClassService";
+import CourseApi from "@/services/CourseService";
 import NewCourse from "./NewCourse";
 import AddCourse from "./AddCourse";
 
@@ -147,10 +154,13 @@ export default {
           this.cData.users.forEach(user => {
             if (user.role === "student") {
               this.students.push(user);
-            } else if (user.role === "teacher") {
+            // } else if (user.role === "teacher") {
+            } else {
               this.teachers.push(user);
             }
           });
+
+          console.log(this.cData.users);
         })
         .catch(err => {
           window.alert(err.response.data.msg);
@@ -232,19 +242,33 @@ export default {
         });
     },
 
-    removeCourse(courseId, courseName) {
-      if (window.confirm(`remove ${courseName} from this class?`)) {
-        Api.removeCourseFromClass({
-          classId: this.$route.params.id,
-          courseId: courseId
+    confirmRemove(courseId, courseName) {
+      CourseApi.getCourse(courseId).then(res =>{
+        if (res.data.class.length === 1){
+          if(window.confirm(`Are you sure?\n'${courseName}' will be permanently deleted because it is no longer used by any other class.`)){
+            this.deleteCourse(courseId, courseName);
+          }
+        } else {
+            if (window.confirm(`remove ${courseName} from this class?`)) {
+              this.removeCourse(courseId)
+            }
+          }
+      }).catch(err =>{
+        console.log(err.response.data ? err.response.data.msg : err);
+        window.alert(`Something went wrong, try again later :(`)
+      })
+    },
+    removeCourse(courseId) {
+      Api.removeCourseFromClass({
+        classId: this.$route.params.id,
+        courseId: courseId
+      })
+        .then(() => {
+          this.removeCourseCB(this.$route.params.id, courseId);
         })
-          .then(() => {
-            this.removeCourseCB(this.$route.params.id, courseId);
-          })
-          .catch(err => {
-            window.alert(err.response.data.msg);
-          });
-      }
+        .catch(err => {
+          window.alert(err.response.data.msg);
+        });
     },
 
     removeCourseCB(classId, courseId) {
@@ -258,20 +282,14 @@ export default {
     },
 
     deleteCourse(id, course) {
-      if (
-        window.confirm(
-          `remove "${course}" and all of its data from this class?`
-        )
-      ) {
-        Api.deleteCourse(id)
-          .then(() => {
-            window.alert("course deleted");
-            this.initData();
-          })
-          .catch(err => {
-            window.alert(err.response.data.msg);
-          });
-      }
+      Api.deleteCourse(id)
+        .then(() => {
+          window.alert("course deleted");
+          this.initData();
+        })
+        .catch(err => {
+          window.alert(err.response.data.msg);
+        });
     }
   }
 };

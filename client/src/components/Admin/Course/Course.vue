@@ -1,13 +1,13 @@
 <template>
   <div class="add-course">
     <div class="left">
-      <p>
+      <p id="nav">
         <span @click="goTo('dashboard')">dashboard</span> /
         <span @click="goTo('classes')">manage class</span>
       </p>
 
       <h1>{{course.name}}</h1>
-      <p v-for="clss in classes" :key="clss._id">{{clss.majorName}} - {{clss.name}}</p>
+      <p id="className" v-for="clss in classes" :key="clss._id" @click="goTo(`classes/class/${clss._id}`)">{{clss.majorName}} - {{clss.name}}</p>
       <h3>Books</h3>
       <a :class="{active: menu === 'upload'}" @click="openMenu('upload')">upload book</a>
       <a :class="{active: menu === 'add'}" @click="openMenu('add')">add book</a>
@@ -25,15 +25,17 @@
       <!-- ----------------------------------------------[Book List] -->
       <template v-else-if="menu === ''">
         <template v-if="this.books.length !== 0">
-          <div class="courses" v-for="(book, index) in books" :key="index">
-            <div class="cLeft">
-              <p class="cName">{{book.title}}</p>
-              <div class="teacher">
-                <p>by {{book.author}}</p>
+          <div class="container">
+            <div class="courses" v-for="(book, index) in books" :key="index">
+              <div class="cLeft">
+                <p class="cName">{{book.title}}</p>
+                <div class="teacher">
+                  <p>by {{book.author}}</p>
+                </div>
               </div>
-            </div>
-            <div class="cRight">
-              <p @click="removeBook(book._id, book.title)">remove</p>
+              <div class="cRight">
+                <p @click="removeBook(book._id, book.title)">remove</p>
+              </div>
             </div>
           </div>
         </template>
@@ -41,55 +43,62 @@
           <p style="fontStyle:italic; fontSize:14px; marginTop:50px">no book yet.</p>
         </template>
       </template>
-    </div>
+    </div
+    ><div class="right">
+      <div class="users">
+        <p class="title">Users</p
+        ><p class="adduser" @click="goTo(`courses/add-user/${courseId}/${course.name}`)">add</p>
+        <div style="paddingTop: 20px"/>
+        <template v-if="students.length === 0 && teachers.length === 0">
+          <p style="marginLeft:10px; fontSize:14px">(no user yet.)</p>
+        </template>
 
-    <div class="right">
-      <p style="fontWeight:bold; fontSize:28px; marginBottom:10px">Users</p>
-      <p class="adduser" @click="goTo(`courses/add-user/${courseId}/${course.name}`)">add user</p>
+        <template v-if="students.length !== 0">
+          <h3>Student</h3>
+          <div class="group" v-for="(stds, index) in students" :key="index">
+              <template v-if="stds.users.length > 0">
+                  <p class="name">{{stds.group}}</p>
+                  <div class="member" v-for="(std, indx) in stds.users" :key="indx">
+                      <p class="uname">{{std.name}}</p>
+                      <a v-if="stds.group === 'Others'"
+                        @click="removeUser(std._id, std.name)"
+                        class="mini-button remove"
+                      >remove</a>
+                  </div>
+              </template>
+          </div>
+        </template>
 
-      <template v-if="students.length === 0 && teachers.length === 0">
-        <p style="marginLeft:5px; fontSize:14px">(no user yet.)</p>
-      </template>
+        <div style="paddingTop:20px"/>
 
-      <template v-if="students.length !== 0">
-        <p style="fontWeight:bold;">Student</p>
-        <ul>
-          <li v-for="(user, index) in students" :key="index">
-            {{user.name}}
-            <a
-              @click="removeUser(user._id, user.name)"
-              class="mini-button remove"
-            >remove</a>
-          </li>
-        </ul>
-      </template>
+        <template v-if="teachers.length !== 0">
+          <h3>Teacher</h3>
+          <ul>
+            <li v-for="(user, index) in teachers" :key="index">
+              {{user.name}}
+              <a
+                @click="removeUser(user._id, user.name)"
+                class="mini-button remove"
+              >remove</a>
+            </li>
+          </ul>
+        </template>
 
-      <template v-if="teachers.length !== 0">
-        <p style="fontWeight:bold;">Teacher</p>
-        <ul>
-          <li v-for="(user, index) in teachers" :key="index">
-            {{user.name}}
-            <a
-              @click="removeUser(user._id, user.name)"
-              class="mini-button remove"
-            >remove</a>
-          </li>
-        </ul>
-      </template>
-
-      <p style="fontWeight:bold;">Requests</p>
-      <template v-if="requests.length !== 0">
-        <ul>
-          <li v-for="(request, index) in requests" :key="index">
-            {{request.name}}
-            <a class="mini-button accept" @click="addUser(request._id)">accept</a>
-            <a class="mini-button reject" @click="reject(request._id)">reject</a>
-          </li>
-        </ul>
-      </template>
-      <template v-else>
-        <p style="marginLeft:5px; fontSize:14px">(no request yet.)</p>
-      </template>
+        <p style="fontWeight:bold; margin: 20px 0 10px">Requests</p>
+        <template v-if="requests.length !== 0">
+          <ul>
+            <li v-for="(request, index) in requests" :key="index">
+              {{request.name}}
+              <a class="mini-button accept" @click="addUser(request._id)">accept</a>
+              <a class="mini-button reject" @click="reject(request._id)">reject</a>
+            </li>
+          </ul>
+        </template>
+        <template v-else>
+          <p style="marginLeft:10px; fontSize:14px">(no request yet.)</p>
+        </template>
+      </div>
+      <div class="delete" @click="deleteCourse">delete course</div>
     </div>
   </div>
 </template>
@@ -124,8 +133,8 @@ export default {
   },
 
   methods: {
-    goTo(page) {
-      window.location.href = `/admin/${page}`;
+    goTo(page){
+        this.$router.push(`/admin/${page}`)
     },
 
     openMenu(menu) {
@@ -175,13 +184,32 @@ export default {
             this.classes = this.course.class
           }
 
-          this.course.users.forEach(user => {
-            if (user.role === "student") {
-              this.students.push(user);
-            } else if (user.role === "teacher") {
-              this.teachers.push(user);
-            }
-          });
+          //Users from class
+          let classes = res.data.class;
+          classes.forEach(clss =>{
+              let stdObj = {
+                  group: `${clss.majorName} - ${clss.name}`,
+                  users: clss.users
+              }
+              this.students.push(stdObj);
+          })
+          //----------------------------------
+
+          //Users from course
+          let users = res.data.users;
+          let obj = {
+                      group: 'Others',
+                      users: []
+                  }
+          users.forEach(user =>{
+              if (user.role === "student") {
+                  obj.users.push(user);
+              } else if (user.role === "teacher") {
+                  this.teachers.push(user);
+              }
+          })
+          this.students.push(obj);
+          //----------------------------------
         })
         .catch(err => {
           window.alert(err.response.data.msg);
@@ -283,6 +311,16 @@ export default {
         });
     },
 
+    deleteCourse(){
+      if(window.confirm(`are you sure?`)){
+        Api.deleteCourse(this.courseId).then(()=>{
+          this.goTo(`classes`);
+        }).catch(err =>{
+          window.alert(err.response.data ? err.response.data : err);
+        })
+      }
+    }
+
   }
 };
 </script>
@@ -290,10 +328,29 @@ export default {
 <style scoped>
 .add-course {
   background: #f1f1f1;
-  width: 70%;
+  width: calc(75% - 40px);
   margin: 0 auto;
   padding: 20px;
   border-radius: 20px;
+}
+#nav, h3{
+  margin-bottom: 10px;
+}
+h3{
+  margin-top: 20px;
+}
+h1{
+  margin-bottom: 5px;
+}
+#className{
+  margin-bottom: 5px;
+  transition: .2s ease-in-out;
+  display: block;
+}
+#className:hover{
+  font-weight: bold;
+  cursor: pointer;
+  letter-spacing: 2px;
 }
 input[type="text"] {
   margin-bottom: 20px;
@@ -320,7 +377,7 @@ span {
   transition: 0.1s ease-in;
 }
 span:hover {
-  font-size: 18px;
+  letter-spacing: 2px;
   font-weight: bolder;
   cursor: pointer;
 }
@@ -344,25 +401,93 @@ button:hover {
 }
 
 .left {
-  width: 62%;
+  width: calc(70% - 60px);
+  margin-right: 60px;
 }
 .right {
-  width: 30%;
-  background: #c4c4c4;
-  padding: 0 20px;
-  border-radius: 20px;
-  min-height: 400px;
+  width: calc(30% - 40px);
+  /* background: salmon; */
+  padding: 20px;
+  position: relative;
 }
+.users{
+  background: #c4c4c4;
+  border-radius: 20px;
+  height:calc(100vh - 300px);
+  min-height: 400px;
+  overflow: auto;
+  width: calc(100% - 40px);
+  padding: 20px;
+  margin-bottom: 10px;
+}
+
+.delete{
+  display: inline-block;
+  padding: 5px 10px;
+  background: #888;
+  border-radius: 20px;
+  position: absolute;
+  color:#000;
+  right: 0;
+  /* float: right; */
+}
+.delete:hover{
+  background: red;
+  color: white;
+  cursor: pointer;
+}
+
+.adduser, .title{
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.title{
+  font-weight:bold; 
+  font-size:32px;
+  width: 75%;
+}
+
 .adduser {
-  text-align: right;
+  width: calc(25% - 10px);
+  text-align:center;
+  border-radius: 20px;
+  padding: 2px 5px;
+  background: #666;
+  color: #fff;
 }
 .adduser:hover {
   cursor: pointer;
-  text-decoration: underline;
+  opacity: 0.8;
 }
 
 ul li {
   line-height: 30px;
+  list-style-type: none;
+}
+
+.right h3{
+  margin-top: 0;
+  font-size: 20px;
+  margin-bottom: 20px;
+}
+
+.group{
+  margin-left: 10px;
+  margin-bottom: 15px;
+}
+.group .name{
+  margin-bottom: 10px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.uname, .group a{
+  display: inline-block;
+}
+
+.uname{
+  margin-bottom: 5px;
 }
 
 .mini-button {
@@ -394,10 +519,15 @@ ul li {
   width: 50%;
 }
 
+.container{
+  height: 380px;
+  overflow: auto;
+}
+
 .courses {
   background: #ccc;
-  border-radius: 20px;
-  padding: 0 10px;
+  border-radius: 15px;
+  padding: 10px 15px;
   margin-bottom: 10px;
   margin-top: 20px;
   width: 88%;
@@ -424,7 +554,7 @@ ul li {
 .cName {
   font-size: 25px;
   font-weight: bold;
-  margin-bottom: -10px;
+  margin-bottom: 5px;
 }
 .teacher p {
   display: inline-block;

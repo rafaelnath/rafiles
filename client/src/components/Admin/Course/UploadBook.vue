@@ -38,6 +38,16 @@ export default {
     };
   },
 
+  props:{
+    cid: String,
+  },
+
+  created(){
+    if(this.$route.params.id){
+      this.cid = this.$route.params.id;
+    }
+  },
+
   methods: {
     goTo(page) {
       window.location.href = `/admin/${page}`;
@@ -66,16 +76,21 @@ export default {
       this.file = file;
     },
     upload() {
+      if(!this.title || !this.author || !this.desc){
+        window.alert(`please fill all the empty field!`);
+        return;
+      }
       if (!this.file) {
         window.alert(`uploading nothing :)`);
         return;
       }
 
+
       const formData = new FormData();
       formData.append("file", this.file);
 
       let { title, author, desc } = this;
-
+      
       RealApi()
         .post("book/upload", formData, {
           onUploadProgress: e =>
@@ -106,14 +121,15 @@ export default {
     },
     add(id) {
       CourseApi.addBookToCourse({
-        courseId: this.$route.params.id,
+        courseId: this.cid,
         bookId: id
       })
         .then(() => {
-          this.addCB(this.$route.params.id, id);
+          this.addCB(this.cid, id);
         })
         .catch(err => {
           window.alert(err.response.data.msg);
+          // window.alert(this.cid);
         });
     },
 
@@ -124,7 +140,13 @@ export default {
       })
         .then(() => {
           window.alert("book added.");
-          this.initData();
+          
+          if(this.$route.params.id){
+            this.initData();
+          } else{
+            this.$parent.initData();
+            this.$parent.open(`upload`);
+          }
         })
         .catch(err => {
           window.alert(err.response.data.msg);
@@ -140,6 +162,8 @@ export default {
   width: 70%;
   padding:20px;
   margin-top: 20px;
+  height: 320px;
+  overflow: auto;
   border-radius: 20px;
 }
 input[type="text"] {

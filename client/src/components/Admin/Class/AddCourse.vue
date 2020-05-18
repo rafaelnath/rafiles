@@ -8,8 +8,11 @@
           <p class="cName">{{course.name}}</p>
           <!-- <div class="teacher" v-if="course.users.length !== 0"> -->
           <div class="teacher">
-            <p>Teacher:</p>
-            <p v-if="course.users.length !== 0">{{course.users}}</p>
+            <p>User:</p>
+            <template v-if="course.users.length !== 0">
+              <p v-for="(user, indx) in course.users" :key="indx">{{user.name}},&nbsp;</p>
+            </template>
+            <!-- <p v-if="course.users.length !== 0">{{course.users}}</p> -->
             <p v-else>none</p>
           </div>
         </div>
@@ -63,7 +66,7 @@ export default {
       })
         .then(() => {
           window.alert("course added.");
-          this.initData();
+          this.$parent.initData();
         })
         .catch(err => {
           window.alert(err.response.data.msg);

@@ -25,10 +25,18 @@ export default {
       tab: "course"
     };
   },
+
   components:{
     BrowseCourse,
     BrowseClass,
   },
+
+  created(){
+    if(this.$route.query.tab){
+      this.tab = this.$route.query.tab;
+    }
+  },
+
   methods: {
     changeTab(tab) {
       this.tab = tab;
