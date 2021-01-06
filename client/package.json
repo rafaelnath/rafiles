@@ -13,7 +13,7 @@
     "build": "node build/build.js"
   },
   "dependencies": {
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "croppie": "^2.6.4",
     "intersection-observer": "^0.7.0",
     "lodash": "^4.17.15",
